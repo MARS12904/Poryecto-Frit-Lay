@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Alert,
     FlatList,
@@ -10,15 +10,19 @@ import {
     View,
 } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { router } from 'expo-router';
 import { useCart } from '../../contexts/CartContext';
+import DeliveryScheduler from '../../components/DeliveryScheduler';
+import ProductImage from '../../components/ProductImage';
 
 export default function CartScreen() {
   return <CartContent />;
 }
 
 function CartContent() {
-  const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
+  const { items, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart, deliverySchedule, setDeliverySchedule } = useCart();
   const { user } = useAuth();
+  const [showDeliveryScheduler, setShowDeliveryScheduler] = useState(false);
 
   const handleQuantityChange = (productId: string, quantity: number) => {
     if (quantity <= 0) {
@@ -56,22 +60,37 @@ function CartContent() {
       return;
     }
     
+    // Si no hay programación de entrega, mostrar el programador primero
+    if (!deliverySchedule) {
+      Alert.alert(
+        'Programar Entrega',
+        'Antes de proceder al pago, necesitas programar la entrega de tu pedido.',
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          { text: 'Programar Entrega', onPress: () => setShowDeliveryScheduler(true) }
+        ]
+      );
+      return;
+    }
+    
     Alert.alert(
       'Proceder al pago',
       `Total: $${totalPrice.toFixed(2)}\n¿Deseas continuar con el pago?`,
       [
         { text: 'Cancelar', style: 'cancel' },
-        { text: 'Continuar', onPress: () => {
-          // Aquí navegarías a la pantalla de pagos
-          Alert.alert('Éxito', 'Redirigiendo a la pantalla de pagos...');
-        }}
+        { text: 'Continuar', onPress: () => router.push('/payments') }
       ]
     );
   };
 
   const renderCartItem = ({ item }: { item: any }) => (
     <View style={styles.cartItem}>
-      <Image source={{ uri: item.product.image }} style={styles.productImage} />
+      <ProductImage 
+        source={{ uri: item.product.image }} 
+        style={styles.productImage}
+        fallbackIcon="bag-outline"
+        fallbackColor="#007AFF"
+      />
       <View style={styles.itemInfo}>
         <Text style={styles.productName}>{item.product.name}</Text>
         <Text style={styles.productPrice}>${item.product.price}</Text>
@@ -141,6 +160,22 @@ function CartContent() {
       />
 
       <View style={styles.footer}>
+        {/* Información de entrega programada */}
+        {deliverySchedule && (
+          <View style={styles.deliveryInfo}>
+            <View style={styles.deliveryHeader}>
+              <Ionicons name="calendar" size={16} color="#007AFF" />
+              <Text style={styles.deliveryTitle}>Entrega Programada</Text>
+              <TouchableOpacity onPress={() => setShowDeliveryScheduler(true)}>
+                <Ionicons name="create-outline" size={16} color="#007AFF" />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.deliveryDate}>{deliverySchedule.date}</Text>
+            <Text style={styles.deliveryTime}>{deliverySchedule.timeSlot}</Text>
+            <Text style={styles.deliveryAddress}>{deliverySchedule.address}</Text>
+          </View>
+        )}
+
         <View style={styles.summary}>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Total de productos:</Text>
@@ -152,11 +187,11 @@ function CartContent() {
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Envío:</Text>
-            <Text style={styles.summaryValue}>Gratis</Text>
+            <Text style={styles.summaryValue}>{deliverySchedule ? 'S/ 15.00' : 'Gratis'}</Text>
           </View>
           <View style={[styles.summaryRow, styles.totalRow]}>
             <Text style={styles.totalLabel}>Total:</Text>
-            <Text style={styles.totalValue}>${totalPrice.toFixed(2)}</Text>
+            <Text style={styles.totalValue}>${(totalPrice + (deliverySchedule ? 15.00 : 0)).toFixed(2)}</Text>
           </View>
         </View>
 
@@ -165,6 +200,25 @@ function CartContent() {
           <Ionicons name="arrow-forward" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
+
+      {/* Modal del programador de entrega */}
+      <DeliveryScheduler
+        visible={showDeliveryScheduler}
+        onClose={() => setShowDeliveryScheduler(false)}
+        onSchedule={(schedule) => {
+          setDeliverySchedule(schedule);
+          setShowDeliveryScheduler(false);
+          // Después de programar la entrega, proceder al pago
+          Alert.alert(
+            'Entrega Programada',
+            '¡Perfecto! Ahora puedes proceder al pago.',
+            [
+              { text: 'Continuar al Pago', onPress: () => router.push('/payments') }
+            ]
+          );
+        }}
+        existingSchedule={deliverySchedule}
+      />
     </View>
   );
 }
@@ -278,6 +332,40 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopWidth: 1,
     borderTopColor: '#e1e5e9',
+  },
+  deliveryInfo: {
+    backgroundColor: '#f8f9fa',
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#007AFF',
+  },
+  deliveryHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  deliveryTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginLeft: 8,
+    flex: 1,
+  },
+  deliveryDate: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  deliveryTime: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  deliveryAddress: {
+    fontSize: 14,
+    color: '#666',
   },
   summary: {
     marginBottom: 20,

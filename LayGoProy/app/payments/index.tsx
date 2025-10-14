@@ -11,8 +11,14 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useCart } from '../../contexts/CartContext';
 import { useAuth } from '../../contexts/AuthContext';
+import { useOrders } from '../../contexts/OrdersContext';
+import { useStock } from '../../contexts/StockContext';
+import { useMetrics } from '../../contexts/MetricsContext';
 import AuthGuard from '../../components/AuthGuard';
 import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../../constants/theme';
+import * as WebBrowser from 'expo-web-browser';
+import { PAYMENT_LINK_URL } from '../../constants/payments';
+import { router } from 'expo-router';
 
 interface PaymentMethod {
   id: string;
@@ -82,6 +88,9 @@ function PaymentsContent() {
     validateOrder 
   } = useCart();
   const { user } = useAuth();
+  const { addOrder } = useOrders();
+  const { reduceStock } = useStock();
+  const { updateMetrics } = useMetrics();
   const [selectedMethod, setSelectedMethod] = useState<string>('');
   const [cardDetails, setCardDetails] = useState({
     number: '',
@@ -97,6 +106,90 @@ function PaymentsContent() {
 
   const cartSummary = getCartSummary();
   const orderValidation = validateOrder();
+
+  const openPaymentLink = async () => {
+    try {
+      await WebBrowser.openBrowserAsync(PAYMENT_LINK_URL);
+    } catch (e) {
+      Alert.alert('Error', 'No se pudo abrir la pasarela de pago');
+    }
+  };
+
+  const processPayment = async () => {
+    if (!user) {
+      Alert.alert('Error', 'Usuario no autenticado');
+      return;
+    }
+
+    try {
+      // 1. Verificar stock disponible
+      for (const item of items) {
+        const stockAvailable = await reduceStock(item.product.id, item.quantity);
+        if (!stockAvailable) {
+          Alert.alert(
+            'Stock Insuficiente', 
+            `No hay suficiente stock para ${item.product.name}. Stock disponible: ${item.product.stock}`
+          );
+          return;
+        }
+      }
+
+      // 2. Crear el pedido
+      const orderItems = items.map(item => ({
+        id: item.product.id,
+        name: item.product.name,
+        brand: item.product.brand,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        subtotal: item.subtotal,
+        weight: item.product.weight,
+      }));
+
+      const cartSummary = getCartSummary();
+      const orderId = await addOrder({
+        total: cartSummary.finalTotal,
+        wholesaleTotal: cartSummary.totalPrice,
+        savings: cartSummary.wholesaleSavings,
+        items: orderItems,
+        deliveryDate: deliverySchedule?.date,
+        deliveryAddress: deliverySchedule?.address,
+        deliveryTimeSlot: deliverySchedule?.timeSlot,
+        paymentMethod: paymentMethods.find(m => m.id === selectedMethod)?.name || 'Desconocido',
+        isWholesale: isWholesaleMode,
+        userId: user.id,
+      });
+
+      // 3. Actualizar métricas del usuario
+      await updateMetrics(user.id, {
+        total: cartSummary.finalTotal,
+        savings: cartSummary.wholesaleSavings,
+        items: orderItems,
+      });
+
+      // 4. Limpiar carrito
+      clearCart();
+
+      // 5. Mostrar confirmación
+      Alert.alert(
+        '¡Pago Exitoso!',
+        `Tu pedido ${orderId} ha sido procesado exitosamente.\n\nTotal: S/ ${cartSummary.finalTotal.toFixed(2)}\n\nTe enviaremos un correo de confirmación.`,
+        [
+          {
+            text: 'Ver Pedidos',
+            onPress: () => router.push('/(tabs)/orders')
+          },
+          {
+            text: 'Continuar Comprando',
+            onPress: () => router.push('/(tabs)/catalog')
+          }
+        ]
+      );
+
+    } catch (error) {
+      console.error('Error processing payment:', error);
+      Alert.alert('Error', 'Hubo un problema procesando tu pago. Por favor intenta nuevamente.');
+    }
+  };
 
   const handlePayment = () => {
     // Validar el pedido primero
@@ -144,22 +237,16 @@ function PaymentsContent() {
           text: 'Pagar',
           onPress: () => {
             // Simular procesamiento de pago
+            Alert.alert(
+              'Procesando Pago...',
+              'Por favor espera mientras procesamos tu pago.',
+              [],
+              { cancelable: false }
+            );
+            
+            // Simular delay del procesamiento
             setTimeout(() => {
-              Alert.alert(
-                'Pago Exitoso',
-                `Tu pedido ha sido procesado correctamente.\n\nNúmero de pedido: #${Date.now().toString().slice(-6)}\n${
-                  deliverySchedule ? `Entrega programada para: ${deliverySchedule.date}` : ''
-                }`,
-                [
-                  {
-                    text: 'OK',
-                    onPress: () => {
-                      clearCart();
-                      // Aquí navegarías de vuelta a la pantalla principal
-                    }
-                  }
-                ]
-              );
+              processPayment();
             }, 2000);
           }
         }
@@ -167,55 +254,60 @@ function PaymentsContent() {
     );
   };
 
-  const renderPaymentMethod = (method: PaymentMethod) => (
-    <TouchableOpacity
-      key={method.id}
-      style={[
-        styles.paymentMethodCard,
-        selectedMethod === method.id && styles.paymentMethodCardSelected,
-        !method.available && styles.paymentMethodCardDisabled
-      ]}
-      onPress={() => method.available && setSelectedMethod(method.id)}
-      disabled={!method.available}
-    >
-      <View style={styles.paymentMethodHeader}>
-        <Ionicons 
-          name={method.icon as any} 
-          size={24} 
-          color={selectedMethod === method.id ? Colors.light.primary : Colors.light.textSecondary} 
-        />
-        <View style={styles.paymentMethodInfo}>
-          <Text style={[
-            styles.paymentMethodName,
-            selectedMethod === method.id && styles.paymentMethodNameSelected,
-            !method.available && styles.paymentMethodNameDisabled
-          ]}>
-            {method.name}
-          </Text>
-          <Text style={[
-            styles.paymentMethodDescription,
-            !method.available && styles.paymentMethodDescriptionDisabled
-          ]}>
-            {method.description}
-          </Text>
-          {method.processingFee && method.processingFee > 0 && (
-            <Text style={styles.processingFee}>
-              Comisión: {(method.processingFee * 100).toFixed(1)}%
+  const renderPaymentMethod = (method: PaymentMethod) => {
+    const processingFeeText = method.processingFee && method.processingFee > 0 
+      ? `Comisión: ${(method.processingFee * 100).toFixed(1)}%` 
+      : '';
+
+    return (
+      <TouchableOpacity
+        style={[
+          styles.paymentMethodCard,
+          selectedMethod === method.id && styles.paymentMethodCardSelected,
+          !method.available && styles.paymentMethodCardDisabled
+        ]}
+        onPress={() => method.available && setSelectedMethod(method.id)}
+        disabled={!method.available}
+      >
+        <View style={styles.paymentMethodHeader}>
+          <Ionicons 
+            name={method.icon as any} 
+            size={24} 
+            color={selectedMethod === method.id ? Colors.light.primary : Colors.light.textSecondary} 
+          />
+          <View style={styles.paymentMethodInfo}>
+            <Text style={[
+              styles.paymentMethodName,
+              selectedMethod === method.id && styles.paymentMethodNameSelected,
+              !method.available && styles.paymentMethodNameDisabled
+            ]}>
+              {method.name}
             </Text>
-          )}
+            <Text style={[
+              styles.paymentMethodDescription,
+              !method.available && styles.paymentMethodDescriptionDisabled
+            ]}>
+              {method.description}
+            </Text>
+            {processingFeeText ? (
+              <Text style={styles.processingFee}>
+                {processingFeeText}
+              </Text>
+            ) : null}
+          </View>
+          <View style={[
+            styles.radioButton,
+            selectedMethod === method.id && styles.radioButtonSelected,
+            !method.available && styles.radioButtonDisabled
+          ]}>
+            {selectedMethod === method.id && (
+              <View style={styles.radioButtonInner} />
+            )}
+          </View>
         </View>
-        <View style={[
-          styles.radioButton,
-          selectedMethod === method.id && styles.radioButtonSelected,
-          !method.available && styles.radioButtonDisabled
-        ]}>
-          {selectedMethod === method.id && (
-            <View style={styles.radioButtonInner} />
-          )}
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -306,7 +398,11 @@ function PaymentsContent() {
 
       <View style={styles.paymentMethods}>
         <Text style={styles.sectionTitle}>Métodos de Pago</Text>
-        {paymentMethods.map(renderPaymentMethod)}
+        {paymentMethods.map((method) => (
+          <View key={method.id}>
+            {renderPaymentMethod(method)}
+          </View>
+        ))}
       </View>
 
       {selectedMethod === 'card' && (

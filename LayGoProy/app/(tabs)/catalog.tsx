@@ -12,8 +12,10 @@ import {
     View,
 } from 'react-native';
 import { ResponsiveCard } from '../../components/ResponsiveLayout';
+import ProductImage from '../../components/ProductImage';
 import { BorderRadius, Colors, Dimensions, FontSizes, Shadows, Spacing } from '../../constants/theme';
 import { useCart } from '../../contexts/CartContext';
+import { useStock } from '../../contexts/StockContext';
 import { getProductsByCategory, Product, productCategories, products, searchProducts } from '../../data/products';
 
 export default function CatalogScreen() {
@@ -29,6 +31,7 @@ function CatalogContent() {
   const [showQuantityModal, setShowQuantityModal] = useState(false);
   
   const { addToCart, isInCart, isWholesaleMode, updateQuantity } = useCart();
+  const { getProductStock } = useStock();
 
   useEffect(() => {
     let filtered = products;
@@ -90,7 +93,12 @@ function CatalogContent() {
     return (
       <ResponsiveCard style={styles.productCard} padding="md">
         <View style={styles.productImageContainer}>
-          <Image source={{ uri: item.image }} style={styles.productImage} />
+          <ProductImage 
+            source={{ uri: item.image }} 
+            style={styles.productImage}
+            fallbackIcon="bag-outline"
+            fallbackColor={Colors.light.primary}
+          />
           {!item.isAvailable && (
             <View style={styles.unavailableOverlay}>
               <Text style={styles.unavailableText}>No disponible</Text>
@@ -128,7 +136,7 @@ function CatalogContent() {
               )}
             </View>
             <Text style={styles.productStock}>
-              Stock: {item.stock}
+              Stock: {getProductStock(item.id)}
             </Text>
           </View>
 

@@ -1,10 +1,31 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Image, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { 
+  Alert, 
+  Image, 
+  ScrollView, 
+  StyleSheet, 
+  Switch, 
+  Text, 
+  TouchableOpacity, 
+  View,
+  Dimensions 
+} from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
-import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../../constants/theme';
+import { useMetrics } from '../../contexts/MetricsContext';
+import { 
+  Colors, 
+  Spacing, 
+  FontSizes, 
+  BorderRadius, 
+  Shadows, 
+  Dimensions as ThemeDimensions,
+  responsive 
+} from '../../constants/theme';
+
+const { width: screenWidth } = Dimensions.get('window');
 
 export default function ProfileScreen() {
   return <ProfileContent />;
@@ -13,34 +34,24 @@ export default function ProfileScreen() {
 function ProfileContent() {
   const { user, updateProfile, logout } = useAuth();
   const { totalItems, totalPrice, clearCart, isWholesaleMode } = useCart();
+  const { getUserMetrics } = useMetrics();
   const [notificationsEnabled, setNotificationsEnabled] = useState(
     user?.preferences?.notifications ?? true
   );
 
-  // Datos simulados del dashboard de comerciante
-  const merchantStats = {
-    totalOrders: 24,
-    totalSpent: 2847.50,
-    totalSavings: 456.30,
-    averageOrderValue: 118.65,
-    lastOrderDate: '2024-01-28',
-    favoriteBrand: 'Lay\'s',
+  // Obtener métricas reales del usuario
+  const merchantStats = user ? getUserMetrics(user.id) : {
+    totalOrders: 0,
+    totalSpent: 0,
+    totalSavings: 0,
+    averageOrderValue: 0,
     monthlyGoal: 5000,
-    monthlyProgress: 2847.50,
-    topProducts: [
-      { name: 'Lay\'s Clásicas', quantity: 120, revenue: 336.00 },
-      { name: 'Doritos Nacho', quantity: 85, revenue: 280.50 },
-      { name: 'Cheetos Queso', quantity: 78, revenue: 249.60 },
-    ],
-    recentActivity: [
-      { type: 'order', description: 'Pedido FL-2024-004 entregado', date: '2024-01-28', amount: 67.20 },
-      { type: 'payment', description: 'Pago procesado exitosamente', date: '2024-01-25', amount: 45.60 },
-      { type: 'reorder', description: 'Reordenaste productos populares', date: '2024-01-22', amount: 89.40 },
-    ]
+    monthlyProgress: 0,
+    topProducts: [],
+    recentActivity: [],
   };
 
   const handleImagePicker = async () => {
-    // Esta funcionalidad se implementaría con expo-image-picker
     Alert.alert('Función en desarrollo', 'La selección de imagen estará disponible pronto');
   };
 
@@ -89,53 +100,73 @@ function ProfileContent() {
   if (!user) {
     return (
       <View style={styles.container}>
-        <Text>Error: Usuario no encontrado</Text>
+        <View style={styles.errorContainer}>
+          <Ionicons name="alert-circle" size={48} color={Colors.light.error} />
+          <Text style={styles.errorText}>Error: Usuario no encontrado</Text>
+        </View>
       </View>
     );
   }
 
+  const progressPercentage = merchantStats.monthlyGoal > 0 
+    ? (merchantStats.monthlyProgress / merchantStats.monthlyGoal) * 100 
+    : 0;
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {/* Header del perfil */}
       <View style={styles.header}>
         <View style={styles.profileImageContainer}>
           {user.profileImage ? (
             <Image source={{ uri: user.profileImage }} style={styles.profileImage} />
           ) : (
             <View style={styles.defaultProfileImage}>
-              <Ionicons name="business" size={40} color={Colors.light.primary} />
+              <Ionicons name="business" size={responsive({ xs: 32, sm: 36, md: 40 })} color={Colors.light.primary} />
             </View>
           )}
           <TouchableOpacity style={styles.editImageButton} onPress={handleImagePicker}>
-            <Ionicons name="camera" size={16} color={Colors.light.background} />
+            <Ionicons name="camera" size={responsive({ xs: 12, sm: 14, md: 16 })} color={Colors.light.background} />
           </TouchableOpacity>
         </View>
-        <Text style={styles.name}>{user.name}</Text>
-        <Text style={styles.email}>{user.email}</Text>
-        {isWholesaleMode && (
-          <View style={styles.merchantBadge}>
-            <Ionicons name="business" size={16} color={Colors.light.primary} />
-            <Text style={styles.merchantBadgeText}>Comerciante Verificado</Text>
-          </View>
-        )}
+        
+        <View style={styles.userInfo}>
+          <Text style={styles.name}>{user.name}</Text>
+          <Text style={styles.email}>{user.email}</Text>
+          {isWholesaleMode && (
+            <View style={styles.merchantBadge}>
+              <Ionicons name="business" size={responsive({ xs: 12, sm: 14, md: 16 })} color={Colors.light.primary} />
+              <Text style={styles.merchantBadgeText}>Comerciante Verificado</Text>
+            </View>
+          )}
+        </View>
       </View>
 
       {/* Dashboard de comerciante */}
       <View style={styles.dashboardSection}>
         <Text style={styles.sectionTitle}>Dashboard de Negocio</Text>
         
+        {/* Estadísticas principales */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
-            <Ionicons name="receipt" size={24} color={Colors.light.primary} />
+            <View style={styles.statIconContainer}>
+              <Ionicons name="receipt" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.primary} />
+            </View>
             <Text style={styles.statNumber}>{merchantStats.totalOrders}</Text>
             <Text style={styles.statLabel}>Pedidos</Text>
           </View>
+          
           <View style={styles.statCard}>
-            <Ionicons name="cash" size={24} color={Colors.light.success} />
+            <View style={styles.statIconContainer}>
+              <Ionicons name="cash" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.success} />
+            </View>
             <Text style={styles.statNumber}>S/ {merchantStats.totalSpent.toFixed(0)}</Text>
             <Text style={styles.statLabel}>Gastado</Text>
           </View>
+          
           <View style={styles.statCard}>
-            <Ionicons name="trending-down" size={24} color={Colors.light.warning} />
+            <View style={styles.statIconContainer}>
+              <Ionicons name="trending-down" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.warning} />
+            </View>
             <Text style={styles.statNumber}>S/ {merchantStats.totalSavings.toFixed(0)}</Text>
             <Text style={styles.statLabel}>Ahorrado</Text>
           </View>
@@ -153,77 +184,89 @@ function ProfileContent() {
             <View 
               style={[
                 styles.progressFill, 
-                { width: `${(merchantStats.monthlyProgress / merchantStats.monthlyGoal) * 100}%` }
+                { width: `${Math.min(progressPercentage, 100)}%` }
               ]} 
             />
           </View>
           <Text style={styles.progressPercentage}>
-            {((merchantStats.monthlyProgress / merchantStats.monthlyGoal) * 100).toFixed(1)}% completado
+            {progressPercentage.toFixed(1)}% completado
           </Text>
         </View>
 
         {/* Productos top */}
-        <View style={styles.topProductsCard}>
-          <Text style={styles.cardTitle}>Productos Más Vendidos</Text>
-          {merchantStats.topProducts.map((product, index) => (
-            <View key={index} style={styles.productItem}>
-              <View style={styles.productInfo}>
-                <Text style={styles.productName}>{product.name}</Text>
-                <Text style={styles.productQuantity}>{product.quantity} unidades</Text>
+        {merchantStats.topProducts.length > 0 && (
+          <View style={styles.topProductsCard}>
+            <Text style={styles.cardTitle}>Productos Más Vendidos</Text>
+            {merchantStats.topProducts.slice(0, 3).map((product, index) => (
+              <View key={index} style={styles.productItem}>
+                <View style={styles.productInfo}>
+                  <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
+                  <Text style={styles.productQuantity}>{product.quantity} unidades</Text>
+                </View>
+                <Text style={styles.productRevenue}>S/ {product.revenue.toFixed(2)}</Text>
               </View>
-              <Text style={styles.productRevenue}>S/ {product.revenue.toFixed(2)}</Text>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        )}
 
         {/* Actividad reciente */}
-        <View style={styles.activityCard}>
-          <Text style={styles.cardTitle}>Actividad Reciente</Text>
-          {merchantStats.recentActivity.map((activity, index) => (
-            <View key={index} style={styles.activityItem}>
-              <View style={styles.activityIcon}>
-                <Ionicons 
-                  name={activity.type === 'order' ? 'receipt' : activity.type === 'payment' ? 'card' : 'refresh'} 
-                  size={16} 
-                  color={Colors.light.primary} 
-                />
+        {merchantStats.recentActivity.length > 0 && (
+          <View style={styles.activityCard}>
+            <Text style={styles.cardTitle}>Actividad Reciente</Text>
+            {merchantStats.recentActivity.slice(0, 3).map((activity, index) => (
+              <View key={index} style={styles.activityItem}>
+                <View style={styles.activityIcon}>
+                  <Ionicons 
+                    name={activity.type === 'order' ? 'receipt' : activity.type === 'payment' ? 'card' : 'refresh'} 
+                    size={responsive({ xs: 14, sm: 16 })} 
+                    color={Colors.light.primary} 
+                  />
+                </View>
+                <View style={styles.activityInfo}>
+                  <Text style={styles.activityDescription} numberOfLines={1}>{activity.description}</Text>
+                  <Text style={styles.activityDate}>{activity.date}</Text>
+                </View>
+                <Text style={styles.activityAmount}>S/ {activity.amount.toFixed(2)}</Text>
               </View>
-              <View style={styles.activityInfo}>
-                <Text style={styles.activityDescription}>{activity.description}</Text>
-                <Text style={styles.activityDate}>{activity.date}</Text>
-              </View>
-              <Text style={styles.activityAmount}>S/ {activity.amount.toFixed(2)}</Text>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
+        )}
       </View>
 
+      {/* Sección de información personal */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Información Personal</Text>
         
         <TouchableOpacity style={styles.menuItem} onPress={handleEditProfile}>
           <View style={styles.menuItemLeft}>
-            <Ionicons name="person-outline" size={24} color={Colors.light.primary} />
+            <View style={styles.menuIconContainer}>
+              <Ionicons name="person-outline" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.primary} />
+            </View>
             <Text style={styles.menuItemText}>Editar Perfil</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.light.textLight} />
+          <Ionicons name="chevron-forward" size={responsive({ xs: 16, sm: 18, md: 20 })} color={Colors.light.textLight} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem} onPress={handleChangePassword}>
           <View style={styles.menuItemLeft}>
-            <Ionicons name="lock-closed-outline" size={24} color={Colors.light.primary} />
+            <View style={styles.menuIconContainer}>
+              <Ionicons name="lock-closed-outline" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.primary} />
+            </View>
             <Text style={styles.menuItemText}>Cambiar Contraseña</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.light.textLight} />
+          <Ionicons name="chevron-forward" size={responsive({ xs: 16, sm: 18, md: 20 })} color={Colors.light.textLight} />
         </TouchableOpacity>
       </View>
 
+      {/* Sección de preferencias */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Preferencias</Text>
         
         <View style={styles.menuItem}>
           <View style={styles.menuItemLeft}>
-            <Ionicons name="notifications-outline" size={24} color={Colors.light.primary} />
+            <View style={styles.menuIconContainer}>
+              <Ionicons name="notifications-outline" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.primary} />
+            </View>
             <Text style={styles.menuItemText}>Notificaciones</Text>
           </View>
           <Switch
@@ -234,9 +277,11 @@ function ProfileContent() {
           />
         </View>
 
-        <TouchableOpacity style={styles.menuItem}>
+        <View style={styles.menuItem}>
           <View style={styles.menuItemLeft}>
-            <Ionicons name="moon-outline" size={24} color={Colors.light.secondary} />
+            <View style={styles.menuIconContainer}>
+              <Ionicons name="moon-outline" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.secondary} />
+            </View>
             <Text style={styles.menuItemText}>Modo Oscuro</Text>
           </View>
           <Switch
@@ -245,43 +290,54 @@ function ProfileContent() {
             trackColor={{ false: Colors.light.border, true: Colors.light.secondary }}
             thumbColor={false ? Colors.light.textLight : Colors.light.background}
           />
-        </TouchableOpacity>
+        </View>
       </View>
 
+      {/* Sección de soporte */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Soporte</Text>
         
         <TouchableOpacity style={styles.menuItem}>
           <View style={styles.menuItemLeft}>
-            <Ionicons name="help-circle-outline" size={24} color={Colors.light.success} />
+            <View style={styles.menuIconContainer}>
+              <Ionicons name="help-circle-outline" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.success} />
+            </View>
             <Text style={styles.menuItemText}>Ayuda</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.light.textLight} />
+          <Ionicons name="chevron-forward" size={responsive({ xs: 16, sm: 18, md: 20 })} color={Colors.light.textLight} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem}>
           <View style={styles.menuItemLeft}>
-            <Ionicons name="mail-outline" size={24} color={Colors.light.success} />
+            <View style={styles.menuIconContainer}>
+              <Ionicons name="mail-outline" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.success} />
+            </View>
             <Text style={styles.menuItemText}>Contacto</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.light.textLight} />
+          <Ionicons name="chevron-forward" size={responsive({ xs: 16, sm: 18, md: 20 })} color={Colors.light.textLight} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.menuItem}>
           <View style={styles.menuItemLeft}>
-            <Ionicons name="information-circle-outline" size={24} color={Colors.light.success} />
+            <View style={styles.menuIconContainer}>
+              <Ionicons name="information-circle-outline" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.success} />
+            </View>
             <Text style={styles.menuItemText}>Acerca de</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.light.textLight} />
+          <Ionicons name="chevron-forward" size={responsive({ xs: 16, sm: 18, md: 20 })} color={Colors.light.textLight} />
         </TouchableOpacity>
       </View>
 
-      <View style={styles.section}>
+      {/* Botón de cerrar sesión */}
+      <View style={styles.logoutSection}>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <Ionicons name="log-out-outline" size={24} color={Colors.light.error} />
+          <Ionicons name="log-out-outline" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.error} />
           <Text style={styles.logoutButtonText}>Cerrar Sesión</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Espaciado inferior */}
+      <View style={styles.bottomSpacing} />
     </ScrollView>
   );
 }
@@ -289,121 +345,345 @@ function ProfileContent() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.light.backgroundSecondary,
   },
-  header: {
+  
+  // Error state
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    padding: 30,
-    backgroundColor: '#fff',
-    marginBottom: 20,
+    padding: Spacing.xl,
+  },
+  errorText: {
+    fontSize: FontSizes.lg,
+    color: Colors.light.error,
+    marginTop: Spacing.md,
+    textAlign: 'center',
+  },
+
+  // Header
+  header: {
+    backgroundColor: Colors.light.backgroundCard,
+    paddingTop: responsive({ xs: 50, sm: 60, md: 70 }),
+    paddingBottom: responsive({ xs: 24, sm: 28, md: 32 }),
+    paddingHorizontal: Spacing.lg,
+    alignItems: 'center',
+    ...Shadows.sm,
   },
   profileImageContainer: {
     position: 'relative',
-    marginBottom: 16,
+    marginBottom: Spacing.md,
   },
   profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: responsive({ xs: 80, sm: 90, md: 100 }),
+    height: responsive({ xs: 80, sm: 90, md: 100 }),
+    borderRadius: responsive({ xs: 40, sm: 45, md: 50 }),
   },
   defaultProfileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#e1e5e9',
+    width: responsive({ xs: 80, sm: 90, md: 100 }),
+    height: responsive({ xs: 80, sm: 90, md: 100 }),
+    borderRadius: responsive({ xs: 40, sm: 45, md: 50 }),
+    backgroundColor: Colors.light.backgroundSecondary,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    borderColor: Colors.light.border,
   },
   editImageButton: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: '#007AFF',
-    borderRadius: 15,
-    width: 30,
-    height: 30,
+    backgroundColor: Colors.light.primary,
+    borderRadius: responsive({ xs: 12, sm: 14, md: 15 }),
+    width: responsive({ xs: 24, sm: 28, md: 30 }),
+    height: responsive({ xs: 24, sm: 28, md: 30 }),
     justifyContent: 'center',
+    alignItems: 'center',
+    ...Shadows.sm,
+  },
+  userInfo: {
     alignItems: 'center',
   },
   name: {
-    fontSize: 24,
+    fontSize: responsive({ xs: 20, sm: 22, md: 24 }),
     fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 4,
+    color: Colors.light.text,
+    marginBottom: Spacing.xs,
+    textAlign: 'center',
   },
   email: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: responsive({ xs: 14, sm: 15, md: 16 }),
+    color: Colors.light.textSecondary,
+    marginBottom: Spacing.sm,
+    textAlign: 'center',
   },
+  merchantBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.light.backgroundSecondary,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
+    borderWidth: 1,
+    borderColor: Colors.light.primary,
+  },
+  merchantBadgeText: {
+    fontSize: responsive({ xs: 10, sm: 11, md: 12 }),
+    color: Colors.light.primary,
+    marginLeft: Spacing.xs,
+    fontWeight: '600',
+  },
+
+  // Dashboard section
+  dashboardSection: {
+    padding: Spacing.lg,
+  },
+  sectionTitle: {
+    fontSize: responsive({ xs: 18, sm: 20, md: 22 }),
+    fontWeight: 'bold',
+    color: Colors.light.text,
+    marginBottom: Spacing.lg,
+  },
+
+  // Stats
   statsContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
-    marginBottom: 20,
-    gap: 12,
+    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: Colors.light.backgroundCard,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
     alignItems: 'center',
+    ...Shadows.sm,
+  },
+  statIconContainer: {
+    width: responsive({ xs: 36, sm: 40, md: 44 }),
+    height: responsive({ xs: 36, sm: 40, md: 44 }),
+    borderRadius: responsive({ xs: 18, sm: 20, md: 22 }),
+    backgroundColor: Colors.light.backgroundSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
   },
   statNumber: {
-    fontSize: 20,
+    fontSize: responsive({ xs: 16, sm: 18, md: 20 }),
     fontWeight: 'bold',
-    color: '#333',
-    marginVertical: 4,
+    color: Colors.light.text,
+    marginBottom: Spacing.xs,
   },
   statLabel: {
-    fontSize: 12,
-    color: '#666',
+    fontSize: responsive({ xs: 10, sm: 11, md: 12 }),
+    color: Colors.light.textSecondary,
     textAlign: 'center',
+    fontWeight: '500',
   },
+
+  // Progress card
+  progressCard: {
+    backgroundColor: Colors.light.backgroundCard,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    marginBottom: Spacing.lg,
+    ...Shadows.sm,
+  },
+  progressHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  progressTitle: {
+    fontSize: responsive({ xs: 16, sm: 17, md: 18 }),
+    fontWeight: '600',
+    color: Colors.light.text,
+  },
+  progressValue: {
+    fontSize: responsive({ xs: 14, sm: 15, md: 16 }),
+    color: Colors.light.textSecondary,
+    fontWeight: '500',
+  },
+  progressBar: {
+    height: responsive({ xs: 6, sm: 7, md: 8 }),
+    backgroundColor: Colors.light.backgroundSecondary,
+    borderRadius: BorderRadius.full,
+    marginBottom: Spacing.sm,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: Colors.light.primary,
+    borderRadius: BorderRadius.full,
+  },
+  progressPercentage: {
+    fontSize: responsive({ xs: 12, sm: 13, md: 14 }),
+    color: Colors.light.textSecondary,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+
+  // Cards
+  topProductsCard: {
+    backgroundColor: Colors.light.backgroundCard,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    marginBottom: Spacing.lg,
+    ...Shadows.sm,
+  },
+  activityCard: {
+    backgroundColor: Colors.light.backgroundCard,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    marginBottom: Spacing.lg,
+    ...Shadows.sm,
+  },
+  cardTitle: {
+    fontSize: responsive({ xs: 16, sm: 17, md: 18 }),
+    fontWeight: '600',
+    color: Colors.light.text,
+    marginBottom: Spacing.md,
+  },
+
+  // Product items
+  productItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.light.border,
+  },
+  productInfo: {
+    flex: 1,
+    marginRight: Spacing.sm,
+  },
+  productName: {
+    fontSize: responsive({ xs: 14, sm: 15, md: 16 }),
+    color: Colors.light.text,
+    fontWeight: '500',
+    marginBottom: Spacing.xs,
+  },
+  productQuantity: {
+    fontSize: responsive({ xs: 12, sm: 13, md: 14 }),
+    color: Colors.light.textSecondary,
+  },
+  productRevenue: {
+    fontSize: responsive({ xs: 14, sm: 15, md: 16 }),
+    color: Colors.light.success,
+    fontWeight: '600',
+  },
+
+  // Activity items
+  activityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.light.border,
+  },
+  activityIcon: {
+    width: responsive({ xs: 32, sm: 36, md: 40 }),
+    height: responsive({ xs: 32, sm: 36, md: 40 }),
+    borderRadius: responsive({ xs: 16, sm: 18, md: 20 }),
+    backgroundColor: Colors.light.backgroundSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
+  activityInfo: {
+    flex: 1,
+    marginRight: Spacing.sm,
+  },
+  activityDescription: {
+    fontSize: responsive({ xs: 14, sm: 15, md: 16 }),
+    color: Colors.light.text,
+    fontWeight: '500',
+    marginBottom: Spacing.xs,
+  },
+  activityDate: {
+    fontSize: responsive({ xs: 12, sm: 13, md: 14 }),
+    color: Colors.light.textSecondary,
+  },
+  activityAmount: {
+    fontSize: responsive({ xs: 14, sm: 15, md: 16 }),
+    color: Colors.light.success,
+    fontWeight: '600',
+  },
+
+  // Sections
   section: {
-    backgroundColor: '#fff',
-    marginBottom: 20,
+    backgroundColor: Colors.light.backgroundCard,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    ...Shadows.sm,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: responsive({ xs: 16, sm: 17, md: 18 }),
     fontWeight: '600',
-    color: '#333',
-    padding: 16,
+    color: Colors.light.text,
+    padding: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#e1e5e9',
+    borderBottomColor: Colors.light.border,
   },
+
+  // Menu items
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
+    padding: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: Colors.light.border,
   },
   menuItemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    flex: 1,
+  },
+  menuIconContainer: {
+    width: responsive({ xs: 36, sm: 40, md: 44 }),
+    height: responsive({ xs: 36, sm: 40, md: 44 }),
+    borderRadius: responsive({ xs: 18, sm: 20, md: 22 }),
+    backgroundColor: Colors.light.backgroundSecondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
   },
   menuItemText: {
-    fontSize: 16,
-    color: '#333',
-    marginLeft: 12,
+    fontSize: responsive({ xs: 14, sm: 15, md: 16 }),
+    color: Colors.light.text,
+    fontWeight: '500',
+  },
+
+  // Logout section
+  logoutSection: {
+    paddingHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
   },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
-    marginHorizontal: 20,
-    marginBottom: 20,
-    borderRadius: 12,
+    padding: Spacing.lg,
+    backgroundColor: Colors.light.backgroundCard,
+    borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: '#FF3B30',
+    borderColor: Colors.light.error,
+    ...Shadows.sm,
   },
   logoutButtonText: {
-    fontSize: 16,
-    color: '#FF3B30',
+    fontSize: responsive({ xs: 14, sm: 15, md: 16 }),
+    color: Colors.light.error,
     fontWeight: '600',
-    marginLeft: 8,
+    marginLeft: Spacing.sm,
+  },
+
+  // Bottom spacing
+  bottomSpacing: {
+    height: responsive({ xs: 20, sm: 24, md: 28 }),
   },
 });
