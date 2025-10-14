@@ -24,7 +24,7 @@ interface PaymentMethod {
   id: string;
   name: string;
   type: 'card' | 'transfer' | 'cash' | 'credit';
-  icon: string;
+  icon: keyof typeof Ionicons.glyphMap;
   description: string;
   available: boolean;
   processingFee?: number;
@@ -35,7 +35,7 @@ const paymentMethods: PaymentMethod[] = [
     id: 'card',
     name: 'Tarjeta de Crédito/Débito',
     type: 'card',
-    icon: 'card',
+    icon: 'card-outline',
     description: 'Visa, Mastercard, American Express',
     available: true,
     processingFee: 0.035, // 3.5%
@@ -44,7 +44,7 @@ const paymentMethods: PaymentMethod[] = [
     id: 'transfer',
     name: 'Transferencia Bancaria',
     type: 'transfer',
-    icon: 'business',
+    icon: 'business-outline',
     description: 'Transferencia directa a cuenta Frito-Lay',
     available: true,
     processingFee: 0,
@@ -53,7 +53,7 @@ const paymentMethods: PaymentMethod[] = [
     id: 'credit',
     name: 'Crédito Comercial',
     type: 'credit',
-    icon: 'document-text',
+    icon: 'document-text-outline',
     description: 'Pago a 30 días para comerciantes registrados',
     available: true,
     processingFee: 0,
@@ -62,7 +62,7 @@ const paymentMethods: PaymentMethod[] = [
     id: 'cash',
     name: 'Efectivo contra Entrega',
     type: 'cash',
-    icon: 'cash',
+    icon: 'cash-outline',
     description: 'Pago en efectivo al recibir el pedido',
     available: true,
     processingFee: 0,
@@ -271,7 +271,7 @@ function PaymentsContent() {
       >
         <View style={styles.paymentMethodHeader}>
           <Ionicons 
-            name={method.icon as any} 
+            name={method.icon} 
             size={24} 
             color={selectedMethod === method.id ? Colors.light.primary : Colors.light.textSecondary} 
           />
