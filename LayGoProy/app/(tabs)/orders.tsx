@@ -10,6 +10,7 @@ import {
     Modal,
 } from 'react-native';
 import { useAuth } from '../../contexts/AuthContext';
+import { useOrders } from '../../contexts/OrdersContext';
 import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../../constants/theme';
 
 interface OrderItem {
@@ -121,11 +122,13 @@ export default function OrdersScreen() {
 }
 
 function OrdersContent() {
-  const [orders, setOrders] = useState<Order[]>(mockOrders);
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const { user } = useAuth();
+  const { getOrdersByUser, updateOrderStatus } = useOrders();
+  
+  const orders = user ? getOrdersByUser(user.id) : [];
 
   const filteredOrders = orders.filter(order => {
     if (selectedFilter === 'all') return true;
@@ -137,7 +140,7 @@ function OrdersContent() {
     setShowOrderDetails(true);
   };
 
-  const handleCancelOrder = (orderId: string) => {
+  const handleCancelOrder = async (orderId: string) => {
     Alert.alert(
       'Cancelar pedido',
       '¿Estás seguro de que quieres cancelar este pedido? Esta acción no se puede deshacer.',
@@ -146,10 +149,8 @@ function OrdersContent() {
         {
           text: 'Sí, cancelar',
           style: 'destructive',
-          onPress: () => {
-            setOrders(prev => prev.map(order =>
-              order.id === orderId ? { ...order, status: 'cancelled' as const } : order
-            ));
+          onPress: async () => {
+            await updateOrderStatus(orderId, 'cancelled');
             setShowOrderDetails(false);
             setSelectedOrder(null);
           }
