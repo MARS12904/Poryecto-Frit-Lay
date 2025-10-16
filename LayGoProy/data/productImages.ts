@@ -22,36 +22,37 @@
 
 // URLs de imágenes de alta calidad (temporales hasta que tengas las imágenes locales)
 const PRODUCT_IMAGES = {
-  // Lay's
-  'lays-classic-150g': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop&crop=center',
+  // Lay's Perú
+  'lays-clasico-150g': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop&crop=center',
   'lays-queso-150g': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&crop=center',
+  'lays-jamon-150g': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop&crop=center',
   'lays-cebolla-150g': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&crop=center',
-  'lays-barbacoa-150g': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&crop=center',
-  
-  // Doritos
-  'doritos-nacho-150g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
-  'doritos-cool-ranch-150g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
-  'doritos-flamas-150g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
-  
-  // Cheetos
-  'cheetos-queso-150g': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&crop=center',
-  'cheetos-puffs-150g': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&crop=center',
-  
-  // Ruffles
-  'ruffles-queso-150g': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop&crop=center',
-  'ruffles-crema-150g': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop&crop=center',
-  
-  // Fritos
-  'fritos-original-150g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
-  
-  // Tostitos
-  'tostitos-salsa-verde-150g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
-  
-  // Sabritas
-  'sabritas-adobadas-150g': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop&crop=center',
-  
-  // Bebidas
-  'gatorade-naranja-500ml': 'https://images.unsplash.com/photo-1544148103-0773bf10d330?w=400&h=400&fit=crop&crop=center',
+  'lays-barbacoa-edicion-limitada-150g': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&crop=center',
+
+  // Doritos Perú
+  'doritos-nacho-cheese-145g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
+  'doritos-cool-ranch-145g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
+  'doritos-salsa-picante-145g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
+  'doritos-fuego-145g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
+
+  // Cheetos Perú
+  'cheetos-queso-clasico-150g': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&crop=center',
+  'cheetos-flamin-hot-150g': 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop&crop=center',
+  'cheetos-blanco-150g': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop&crop=center',
+
+  // Cheese Tris / Chizitos
+  'cheese-tris-queso-150g': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop&crop=center',
+  'chizitos-queso-natural-150g': 'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&h=400&fit=crop&crop=center',
+  'chizitos-picante-150g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
+
+  // Piqueo Snax
+  'piqueo-snax-mix-clasico-145g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
+  'piqueo-snax-picante-mixto-145g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
+
+  // Cuates
+  'cuates-natural-150g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
+  'cuates-picante-150g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
+  'cuates-rancherito-150g': 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=400&h=400&fit=crop&crop=center',
 };
 
 // Mapeo de imágenes locales (descomenta cuando tengas las imágenes)

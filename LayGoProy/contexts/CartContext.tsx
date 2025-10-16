@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Product } from '../data/products';
+import { useStock } from './StockContext';
 
 interface CartItem {
   product: Product;
@@ -64,6 +65,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [items, setItems] = useState<CartItem[]>([]);
   const [isWholesaleMode, setIsWholesaleMode] = useState(true); // Por defecto modo mayorista
   const [deliverySchedule, setDeliveryScheduleState] = useState<DeliverySchedule | undefined>();
+  const { isProductAvailable, reduceStock, increaseStock } = useStock();
 
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = items.reduce((sum, item) => sum + item.subtotal, 0);
@@ -110,7 +112,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const addToCart = (product: Product, quantity: number = 1) => {
+  const addToCart = async (product: Product, quantity: number = 1) => {
     // Validar cantidad mínima para comerciantes
     if (isWholesaleMode && quantity < product.minOrderQuantity) {
       quantity = product.minOrderQuantity;
@@ -121,60 +123,76 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       quantity = product.maxOrderQuantity;
     }
 
-    setItems(prevItems => {
-      const existingItem = prevItems.find(item => item.product.id === product.id);
-      const unitPrice = isWholesaleMode ? product.wholesalePrice : product.price;
-      
-      if (existingItem) {
-        const newQuantity = existingItem.quantity + quantity;
-        const finalQuantity = Math.min(newQuantity, product.maxOrderQuantity);
-        
-        return prevItems.map(item =>
-          item.product.id === product.id
-            ? { 
-                ...item, 
-                quantity: finalQuantity,
-                unitPrice,
-                subtotal: finalQuantity * unitPrice
-              }
-            : item
-        );
-      } else {
-        return [...prevItems, { 
-          product, 
-          quantity,
-          unitPrice,
-          subtotal: quantity * unitPrice
-        }];
+    const existingItem = items.find(item => item.product.id === product.id);
+    const unitPrice = isWholesaleMode ? product.wholesalePrice : product.price;
+
+    if (existingItem) {
+      const newQuantity = existingItem.quantity + quantity;
+      const finalQuantity = Math.min(newQuantity, product.maxOrderQuantity);
+      const delta = finalQuantity - existingItem.quantity;
+      if (delta > 0) {
+        if (!isProductAvailable(product.id, delta)) {
+          return; // sin cambios si no hay stock
+        }
+        await reduceStock(product.id, delta);
       }
-    });
+      setItems(prevItems => prevItems.map(item =>
+        item.product.id === product.id
+          ? {
+              ...item,
+              quantity: finalQuantity,
+              unitPrice,
+              subtotal: finalQuantity * unitPrice
+            }
+          : item
+      ));
+    } else {
+      if (!isProductAvailable(product.id, quantity)) {
+        return; // no agregar si no hay stock
+      }
+      await reduceStock(product.id, quantity);
+      setItems(prevItems => [...prevItems, {
+        product,
+        quantity,
+        unitPrice,
+        subtotal: quantity * unitPrice
+      }]);
+    }
   };
 
-  const removeFromCart = (productId: string) => {
+  const removeFromCart = async (productId: string) => {
+    const item = items.find(i => i.product.id === productId);
+    if (item) {
+      await increaseStock(productId, item.quantity);
+    }
     setItems(prevItems => prevItems.filter(item => item.product.id !== productId));
   };
 
-  const updateQuantity = (productId: string, quantity: number) => {
+  const updateQuantity = async (productId: string, quantity: number) => {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      await removeFromCart(productId);
       return;
     }
 
-    setItems(prevItems =>
-      prevItems.map(item => {
-        if (item.product.id === productId) {
-          const finalQuantity = Math.min(quantity, item.product.maxOrderQuantity);
-          const unitPrice = isWholesaleMode ? item.product.wholesalePrice : item.product.price;
-          return { 
-            ...item, 
-            quantity: finalQuantity,
-            unitPrice,
-            subtotal: finalQuantity * unitPrice
-          };
-        }
-        return item;
-      })
-    );
+    const item = items.find(i => i.product.id === productId);
+    if (!item) return;
+    const clamped = Math.min(quantity, item.product.maxOrderQuantity);
+    const delta = clamped - item.quantity;
+    if (delta > 0) {
+      if (!isProductAvailable(productId, delta)) {
+        return; // sin cambios
+      }
+      await reduceStock(productId, delta);
+    } else if (delta < 0) {
+      await increaseStock(productId, Math.abs(delta));
+    }
+    const unitPrice = isWholesaleMode ? item.product.wholesalePrice : item.product.price;
+    setItems(prevItems => prevItems.map(it => it.product.id === productId ? {
+      ...it,
+      quantity: clamped,
+      unitPrice,
+      subtotal: clamped * unitPrice
+    } : it));
   };
 
   const clearCart = () => {

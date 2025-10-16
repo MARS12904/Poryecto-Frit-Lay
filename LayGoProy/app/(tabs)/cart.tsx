@@ -75,7 +75,7 @@ function CartContent() {
     
     Alert.alert(
       'Proceder al pago',
-      `Total: $${totalPrice.toFixed(2)}\n¿Deseas continuar con el pago?`,
+      `Total: S/ ${totalPrice.toFixed(2)}\n¿Deseas continuar con el pago?`,
       [
         { text: 'Cancelar', style: 'cancel' },
         { text: 'Continuar', onPress: () => router.push('/payments') }
@@ -93,7 +93,7 @@ function CartContent() {
       />
       <View style={styles.itemInfo}>
         <Text style={styles.productName}>{item.product.name}</Text>
-        <Text style={styles.productPrice}>${item.product.price}</Text>
+        <Text style={styles.productPrice}>S/ {item.product.price.toFixed(2)}</Text>
         <Text style={styles.productCategory}>{item.product.category}</Text>
         
         <View style={styles.quantityContainer}>
@@ -117,7 +117,7 @@ function CartContent() {
       
       <View style={styles.itemActions}>
         <Text style={styles.itemTotal}>
-          ${(item.product.price * item.quantity).toFixed(2)}
+          S/ {(item.product.price * item.quantity).toFixed(2)}
         </Text>
         <TouchableOpacity
           style={styles.removeButton}
@@ -183,7 +183,7 @@ function CartContent() {
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Subtotal:</Text>
-            <Text style={styles.summaryValue}>${totalPrice.toFixed(2)}</Text>
+            <Text style={styles.summaryValue}>S/ {totalPrice.toFixed(2)}</Text>
           </View>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Envío:</Text>
@@ -191,7 +191,7 @@ function CartContent() {
           </View>
           <View style={[styles.summaryRow, styles.totalRow]}>
             <Text style={styles.totalLabel}>Total:</Text>
-            <Text style={styles.totalValue}>${(totalPrice + (deliverySchedule ? 15.00 : 0)).toFixed(2)}</Text>
+            <Text style={styles.totalValue}>S/ {(totalPrice + (deliverySchedule ? 15.00 : 0)).toFixed(2)}</Text>
           </View>
         </View>
 
