@@ -31,7 +31,7 @@ function CatalogContent() {
   const [showQuantityModal, setShowQuantityModal] = useState(false);
   
   const { addToCart, isInCart, isWholesaleMode, updateQuantity } = useCart();
-  const { getProductStock } = useStock();
+  const { getProductStock, isProductAvailable, reduceStock } = useStock();
 
   useEffect(() => {
     let filtered = products;
@@ -50,7 +50,7 @@ function CatalogContent() {
     setFilteredProducts(filtered);
   }, [selectedCategory, searchQuery]);
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = async (product: Product) => {
     if (!product.isAvailable) {
       Alert.alert('Error', 'Producto no disponible');
       return;
@@ -61,13 +61,32 @@ function CatalogContent() {
       setQuantity(product.minOrderQuantity);
       setShowQuantityModal(true);
     } else {
-      addToCart(product);
+      const desiredQty = 1;
+      if (!isProductAvailable(product.id, desiredQty)) {
+        Alert.alert('Stock insuficiente', 'No hay stock suficiente para agregar este producto.');
+        return;
+      }
+      const reduced = await reduceStock(product.id, desiredQty);
+      if (!reduced) {
+        Alert.alert('Stock insuficiente', 'No se pudo reservar stock.');
+        return;
+      }
+      addToCart(product, desiredQty);
       Alert.alert('Éxito', `${product.name} agregado al carrito`);
     }
   };
 
-  const handleConfirmAddToCart = () => {
+  const handleConfirmAddToCart = async () => {
     if (selectedProduct) {
+      if (!isProductAvailable(selectedProduct.id, quantity)) {
+        Alert.alert('Stock insuficiente', 'No hay stock suficiente para la cantidad seleccionada.');
+        return;
+      }
+      const reduced = await reduceStock(selectedProduct.id, quantity);
+      if (!reduced) {
+        Alert.alert('Stock insuficiente', 'No se pudo reservar stock.');
+        return;
+      }
       addToCart(selectedProduct, quantity);
       Alert.alert('Éxito', `${selectedProduct.name} agregado al carrito (${quantity} unidades)`);
       setShowQuantityModal(false);
@@ -99,6 +118,11 @@ function CatalogContent() {
             fallbackIcon="bag-outline"
             fallbackColor={Colors.light.primary}
           />
+          {getProductStock(item.id) === 0 && (
+            <View style={styles.unavailableOverlay}>
+              <Text style={styles.unavailableText}>Agotado</Text>
+            </View>
+          )}
           {!item.isAvailable && (
             <View style={styles.unavailableOverlay}>
               <Text style={styles.unavailableText}>No disponible</Text>
@@ -151,10 +175,10 @@ function CatalogContent() {
           <TouchableOpacity
             style={[
               styles.addButton,
-              (!item.isAvailable || isInCartItem) && styles.addButtonDisabled
+              (!item.isAvailable || isInCartItem || getProductStock(item.id) === 0) && styles.addButtonDisabled
             ]}
             onPress={() => handleAddToCart(item)}
-            disabled={!item.isAvailable || isInCartItem}
+            disabled={!item.isAvailable || isInCartItem || getProductStock(item.id) === 0}
           >
             <Ionicons 
               name={isInCartItem ? "checkmark" : "add"} 

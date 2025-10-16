@@ -6,6 +6,7 @@ interface StockContextType {
   stock: Record<string, number>;
   updateStock: (productId: string, quantity: number) => Promise<void>;
   reduceStock: (productId: string, quantity: number) => Promise<boolean>;
+  increaseStock: (productId: string, quantity: number) => Promise<void>;
   getProductStock: (productId: string) => number;
   isProductAvailable: (productId: string, quantity: number) => boolean;
   initializeStock: () => Promise<void>;
@@ -36,7 +37,14 @@ export const StockProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     try {
       const stockData = await AsyncStorage.getItem('productStock');
       if (stockData) {
-        setStock(JSON.parse(stockData));
+        const stored: Record<string, number> = JSON.parse(stockData);
+        // Sincronizar con lista actual de productos: agregar faltantes y remover obsoletos
+        const synced: Record<string, number> = {};
+        products.forEach(product => {
+          const existing = stored[product.id];
+          synced[product.id] = typeof existing === 'number' ? existing : product.stock;
+        });
+        setStock(synced);
       } else {
         // Inicializar stock con los valores por defecto de los productos
         await initializeStock();
@@ -62,6 +70,19 @@ export const StockProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setStock(initialStock);
   };
 
+  // Asegurar sincronización si cambia la lista de productos en caliente
+  useEffect(() => {
+    // Reconstruir mapa garantizando claves presentes
+    setStock(prev => {
+      const merged: Record<string, number> = {};
+      products.forEach(product => {
+        const existing = prev[product.id];
+        merged[product.id] = typeof existing === 'number' ? existing : product.stock;
+      });
+      return merged;
+    });
+  }, [products.length]);
+
   const updateStock = async (productId: string, quantity: number): Promise<void> => {
     setStock(prev => ({
       ...prev,
@@ -81,6 +102,14 @@ export const StockProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return false;
   };
 
+  const increaseStock = async (productId: string, quantity: number): Promise<void> => {
+    const currentStock = stock[productId] || 0;
+    setStock(prev => ({
+      ...prev,
+      [productId]: currentStock + Math.max(0, quantity)
+    }));
+  };
+
   const getProductStock = (productId: string): number => {
     return stock[productId] || 0;
   };
@@ -94,6 +123,7 @@ export const StockProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     stock,
     updateStock,
     reduceStock,
+    increaseStock,
     getProductStock,
     isProductAvailable,
     initializeStock,
