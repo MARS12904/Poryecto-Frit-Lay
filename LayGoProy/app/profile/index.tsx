@@ -12,7 +12,6 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { router } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import * as ImagePicker from 'expo-image-picker';
 
 export default function ProfileScreen() {
   const { user, updateProfile, logout } = useAuth();
@@ -21,28 +20,7 @@ export default function ProfileScreen() {
   );
 
   const handleImagePicker = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
-    if (permissionResult.granted === false) {
-      Alert.alert('Error', 'Se requiere permiso para acceder a la galería');
-      return;
-    }
-
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-
-    if (!result.canceled) {
-      const success = await updateProfile({ profileImage: result.assets[0].uri });
-      if (success) {
-        Alert.alert('Éxito', 'Foto de perfil actualizada');
-      } else {
-        Alert.alert('Error', 'Error al actualizar la foto de perfil');
-      }
-    }
+    Alert.alert('Función en desarrollo', 'La selección de imagen estará disponible pronto');
   };
 
   const handleEditProfile = () => {
@@ -75,8 +53,8 @@ export default function ProfileScreen() {
     setNotificationsEnabled(value);
     const success = await updateProfile({
       preferences: {
-        ...user?.preferences,
-        notifications: value
+        notifications: value,
+        theme: user?.preferences?.theme || 'auto'
       }
     });
     

@@ -21,19 +21,14 @@ import {
   FontSizes, 
   BorderRadius, 
   Shadows, 
-  Dimensions as ThemeDimensions,
   responsive 
 } from '../../constants/theme';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 export default function ProfileScreen() {
-  return <ProfileContent />;
-}
-
-function ProfileContent() {
   const { user, updateProfile, logout } = useAuth();
-  const { totalItems, totalPrice, clearCart, isWholesaleMode } = useCart();
+  const { clearCart, isWholesaleMode } = useCart();
   const { getUserMetrics } = useMetrics();
   const [notificationsEnabled, setNotificationsEnabled] = useState(
     user?.preferences?.notifications ?? true
@@ -86,8 +81,8 @@ function ProfileContent() {
     setNotificationsEnabled(value);
     const success = await updateProfile({
       preferences: {
-        ...user?.preferences,
-        notifications: value
+        notifications: value,
+        theme: user?.preferences?.theme || 'auto'
       }
     });
     
@@ -620,14 +615,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     borderRadius: BorderRadius.lg,
     ...Shadows.sm,
-  },
-  sectionTitle: {
-    fontSize: responsive({ xs: 16, sm: 17, md: 18 }),
-    fontWeight: '600',
-    color: Colors.light.text,
-    padding: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.light.border,
   },
 
   // Menu items

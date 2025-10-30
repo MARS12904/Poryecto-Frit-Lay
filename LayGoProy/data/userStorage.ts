@@ -5,7 +5,7 @@ export interface StoredUser {
   email: string;
   name: string;
   phone?: string;
-  password: string; // Encriptada en producción
+  password: string;
   profileImage?: string;
   preferences?: {
     notifications: boolean;
