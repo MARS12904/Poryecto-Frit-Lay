@@ -89,7 +89,7 @@ export const MetricsProvider: React.FC<{ children: React.ReactNode }> = ({ child
         topProducts: [],
         recentActivity: [],
       };
-      setMetrics(prev => ({ ...prev, [userId]: defaultMetrics }));
+      // No usar setMetrics aquí para evitar el error de renderizado
       return defaultMetrics;
     }
     return metrics[userId];
