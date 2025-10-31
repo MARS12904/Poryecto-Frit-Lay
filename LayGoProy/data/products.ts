@@ -88,15 +88,15 @@ export const products: Product[] = [
     tags: ['queso', 'papas']
   },
   {
-    id: 'lays-jamon-150g',
-    name: 'Lay\'s Jamón',
+    id: 'lays-ondas-picante-150g',
+    name: 'Lay\'s Ondas Picante',
     brand: 'Lay\'s',
     category: 'papas',
-    subcategory: 'jamon',
+    subcategory: 'picante',
     price: 4.20,
     wholesalePrice: 3.30,
-    image: getProductImage('lays-jamon-150g'),
-    description: 'Papas fritas con sabor a jamón.',
+    image: getProductImage('lays-ondas-picante-150g'),
+    description: 'Papas fritas con toque picante.',
     weight: '150g',
     unit: 'bolsa',
     stock: 300,
@@ -185,15 +185,15 @@ export const products: Product[] = [
     tags: ['ranch', 'tortilla']
   },
   {
-    id: 'doritos-salsa-picante-145g',
-    name: 'Doritos Salsa Picante',
+    id: 'doritos-flamin-hot-145g',
+    name: 'Doritos Flamin\' Hot',
     brand: 'Doritos',
     category: 'doritos',
     subcategory: 'picante',
     price: 4.50,
     wholesalePrice: 3.60,
-    image: getProductImage('doritos-salsa-picante-145g'),
-    description: 'Tortillas de maíz con salsa picante.',
+    image: getProductImage('doritos-flamin-hot-145g'),
+    description: 'Tortillas de maíz con polvo picante extremo.',
     weight: '145g',
     unit: 'bolsa',
     stock: 300,
@@ -244,6 +244,25 @@ export const products: Product[] = [
     tags: ['queso', 'maiz']
   },
   {
+    id: 'cheetos-picante-150g',
+    name: 'Cheetos Picante',
+    brand: 'Cheetos',
+    category: 'cheetos',
+    subcategory: 'picante',
+    price: 3.80,
+    wholesalePrice: 3.00,
+    image: getProductImage('cheetos-picante-150g'),
+    description: 'Snacks de maíz inflado sabor picante.',
+    weight: '150g',
+    unit: 'bolsa',
+    stock: 220,
+    minOrderQuantity: 12,
+    maxOrderQuantity: 120,
+    isAvailable: true,
+    isWholesale: true,
+    tags: ['picante', 'maiz']
+  },
+  {
     id: 'cheetos-flamin-hot-150g',
     name: 'Cheetos Flamin\' Hot',
     brand: 'Cheetos',
@@ -263,15 +282,15 @@ export const products: Product[] = [
     tags: ['flamin-hot', 'picante']
   },
   {
-    id: 'cheetos-blanco-150g',
-    name: 'Cheetos Blanco',
+    id: 'cheetos-mega-queso-150g',
+    name: 'Cheetos Mega Queso',
     brand: 'Cheetos',
     category: 'cheetos',
-    subcategory: 'blanco',
+    subcategory: 'queso',
     price: 4.20,
     wholesalePrice: 3.30,
-    image: getProductImage('cheetos-blanco-150g'),
-    description: 'Variante Cheetos Blanco.',
+    image: getProductImage('cheetos-mega-queso-150g'),
+    description: 'Snacks de maíz inflado con sabor extra mega queso.',
     weight: '150g',
     unit: 'bolsa',
     stock: 220,
@@ -279,7 +298,7 @@ export const products: Product[] = [
     maxOrderQuantity: 120,
     isAvailable: true,
     isWholesale: true,
-    tags: ['blanco', 'maiz']
+    tags: ['queso', 'maiz']
   },
 
   // Cheese Tris (marca local)
@@ -322,25 +341,6 @@ export const products: Product[] = [
     isAvailable: true,
     isWholesale: true,
     tags: ['queso', 'maiz']
-  },
-  {
-    id: 'chizitos-picante-150g',
-    name: 'Chizitos Picante',
-    brand: 'Chizitos',
-    category: 'chizitos',
-    subcategory: 'picante',
-    price: 3.80,
-    wholesalePrice: 3.00,
-    image: getProductImage('chizitos-picante-150g'),
-    description: 'Snacks de maíz sabor picante.',
-    weight: '150g',
-    unit: 'bolsa',
-    stock: 220,
-    minOrderQuantity: 12,
-    maxOrderQuantity: 120,
-    isAvailable: true,
-    isWholesale: true,
-    tags: ['picante', 'maiz']
   },
 
   // Piqueo Snax
