@@ -98,7 +98,8 @@
 ```
 
 ### Navegación Principal: `app/(tabs)/_layout.tsx`
-**Ubicación:** `LayGoProy/app/(tabs)/_layout.tsx`
+**📂 Ubicación:** `LayGoProy/app/(tabs)/_layout.tsx`  
+**🔗 Ruta completa:** `app/(tabs)/_layout.tsx`
 
 **Función:** Configuración de la navegación por tabs
 - Define las 5 pestañas principales: Inicio, Catálogo, Carrito, Pedidos, Perfil
@@ -110,17 +111,17 @@
 ## 🔐 Módulo de Autenticación
 
 ### Archivos Principales:
-- **Contexto:** `contexts/AuthContext.tsx`
-- **Pantalla de Login:** `app/auth/login.tsx`
-- **Pantalla de Registro:** `app/auth/register.tsx`
-- **Recuperación de Contraseña:** `app/auth/forgot-password.tsx`
-- **Guard de Autenticación:** `components/AuthGuard.tsx`
+- **Contexto:** [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx)
+- **Pantalla de Login:** [`app/auth/login.tsx`](app/auth/login.tsx)
+- **Pantalla de Registro:** [`app/auth/register.tsx`](app/auth/register.tsx)
+- **Recuperación de Contraseña:** [`app/auth/forgot-password.tsx`](app/auth/forgot-password.tsx)
+- **Guard de Autenticación:** [`components/AuthGuard.tsx`](components/AuthGuard.tsx)
 
 ### Funcionalidades Implementadas:
 
 #### 1. **Login con Email y Contraseña**
-**Ubicación:** `app/auth/login.tsx` → `handleLogin()`
-**Contexto:** `contexts/AuthContext.tsx` → `login()`
+**📂 Ubicación:** [`app/auth/login.tsx`](app/auth/login.tsx) → Función `handleLogin()` (línea ~25)  
+**📂 Contexto:** [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx) → Función `login()` (línea ~120)
 
 **Cómo funciona:**
 1. Usuario ingresa email y contraseña
@@ -136,8 +137,8 @@
 - Datos de usuario: `AsyncStorage`
 
 #### 2. **Autenticación Biométrica**
-**Ubicación:** `app/auth/login.tsx` → `handleBiometricLogin()`
-**Contexto:** `contexts/AuthContext.tsx` → `biometricLogin()`
+**📂 Ubicación:** [`app/auth/login.tsx`](app/auth/login.tsx) → Función `handleBiometricLogin()` (línea ~43)  
+**📂 Contexto:** [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx) → Función `biometricLogin()` (línea ~180)
 
 **Cómo funciona:**
 1. Usuario presiona el botón de huella dactilar
@@ -148,8 +149,8 @@
 **Librería:** `expo-local-authentication`
 
 #### 3. **Registro de Usuario**
-**Ubicación:** `app/auth/register.tsx`
-**Contexto:** `contexts/AuthContext.tsx` → `register()`
+**📂 Ubicación:** [`app/auth/register.tsx`](app/auth/register.tsx)  
+**📂 Contexto:** [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx) → Función `register()` (línea ~140)
 
 **Cómo funciona:**
 1. Usuario completa formulario (nombre, email, teléfono, contraseña)
@@ -165,8 +166,8 @@
 - Confirmación de contraseña debe coincidir
 
 #### 4. **Recuperación de Contraseña**
-**Ubicación:** `app/auth/forgot-password.tsx`
-**Contexto:** `contexts/AuthContext.tsx` → `forgotPassword()`
+**📂 Ubicación:** [`app/auth/forgot-password.tsx`](app/auth/forgot-password.tsx)  
+**📂 Contexto:** [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx) → Función `forgotPassword()` (línea ~200)
 
 **Cómo funciona:**
 1. Usuario ingresa su email
@@ -175,8 +176,8 @@
 4. En producción, se enviaría un email con link de recuperación
 
 #### 5. **Cambio de Contraseña**
-**Ubicación:** `app/profile/change-password.tsx`
-**Contexto:** `contexts/AuthContext.tsx` → `changePassword()`
+**📂 Ubicación:** [`app/profile/change-password.tsx`](app/profile/change-password.tsx)  
+**📂 Contexto:** [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx) → Función `changePassword()` (línea ~220)
 
 **Cómo funciona:**
 1. Usuario ingresa contraseña actual y nueva
@@ -189,15 +190,15 @@
 ## 👤 Módulo de Perfil de Usuario
 
 ### Archivos Principales:
-- **Pantalla Principal:** `app/(tabs)/profile.tsx` y `app/profile/index.tsx`
-- **Editar Perfil:** `app/profile/edit.tsx`
-- **Cambiar Contraseña:** `app/profile/change-password.tsx`
-- **Contexto:** `contexts/AuthContext.tsx` → `updateProfile()`
+- **Pantalla Principal:** [`app/(tabs)/profile.tsx`](app/(tabs)/profile.tsx) y [`app/profile/index.tsx`](app/profile/index.tsx)
+- **Editar Perfil:** [`app/profile/edit.tsx`](app/profile/edit.tsx)
+- **Cambiar Contraseña:** [`app/profile/change-password.tsx`](app/profile/change-password.tsx)
+- **Contexto:** [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx) → Función `updateProfile()`
 
 ### Funcionalidades Implementadas:
 
 #### 1. **Visualización de Perfil**
-**Ubicación:** `app/(tabs)/profile.tsx`
+**📂 Ubicación:** [`app/(tabs)/profile.tsx`](app/(tabs)/profile.tsx) - Componente principal (línea ~29)
 
 **Muestra:**
 - Foto de perfil (o ícono por defecto)
@@ -208,8 +209,8 @@
 - Actividad reciente
 
 #### 2. **Editar Información Personal**
-**Ubicación:** `app/profile/edit.tsx`
-**Contexto:** `contexts/AuthContext.tsx` → `updateProfile()`
+**📂 Ubicación:** [`app/profile/edit.tsx`](app/profile/edit.tsx)  
+**📂 Contexto:** [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx) → Función `updateProfile()` (línea ~240)
 
 **Cómo funciona:**
 1. Usuario modifica campos (nombre, teléfono, etc.)
@@ -219,7 +220,8 @@
 5. Se actualiza el estado global del usuario
 
 #### 3. **Subir Foto de Perfil**
-**Ubicación:** `app/(tabs)/profile.tsx` → `handleImagePicker()`
+**📂 Ubicación:** [`app/(tabs)/profile.tsx`](app/(tabs)/profile.tsx) → Función `handleImagePicker()` (línea ~49)  
+**📂 Componente Cámara:** [`components/CameraView.tsx`](components/CameraView.tsx)
 
 **Opciones:**
 - **Tomar Foto:** Abre `components/CameraView.tsx` (cámara nativa)
@@ -238,7 +240,7 @@
 - `expo-image-picker` para seleccionar de galería
 
 #### 4. **Preferencias de Usuario**
-**Ubicación:** `app/(tabs)/profile.tsx` → `handleNotificationToggle()`
+**📂 Ubicación:** [`app/(tabs)/profile.tsx`](app/(tabs)/profile.tsx) → Función `handleNotificationToggle()` (línea ~80)
 
 **Configuraciones:**
 - Notificaciones (on/off)
@@ -255,15 +257,16 @@
 ## 🛍️ Módulo de Catálogo de Productos
 
 ### Archivos Principales:
-- **Pantalla:** `app/(tabs)/catalog.tsx`
-- **Datos:** `data/products.ts`
-- **Componente de Imagen:** `components/ProductImage.tsx`
-- **Contextos:** `CartContext.tsx`, `StockContext.tsx`
+- **Pantalla:** [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx)
+- **Datos:** [`data/products.ts`](data/products.ts)
+- **Componente de Imagen:** [`components/ProductImage.tsx`](components/ProductImage.tsx)
+- **Contextos:** [`contexts/CartContext.tsx`](contexts/CartContext.tsx), [`contexts/StockContext.tsx`](contexts/StockContext.tsx)
 
 ### Funcionalidades Implementadas:
 
 #### 1. **Visualización de Productos**
-**Ubicación:** `app/(tabs)/catalog.tsx` → `renderProduct()`
+**📂 Ubicación:** [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx) → Función `renderProduct()` (línea ~150)  
+**📂 Datos:** [`data/products.ts`](data/products.ts) - Array `products`
 
 **Muestra:**
 - Imagen del producto
@@ -276,8 +279,8 @@
 **Datos:** Cargados desde `data/products.ts`
 
 #### 2. **Búsqueda de Productos**
-**Ubicación:** `app/(tabs)/catalog.tsx` → `useEffect()` con `searchQuery`
-**Función:** `data/products.ts` → `searchProducts()`
+**📂 Ubicación:** [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx) → `useEffect()` con `searchQuery` (línea ~36)  
+**📂 Función:** [`data/products.ts`](data/products.ts) → Función `searchProducts()`
 
 **Cómo funciona:**
 1. Usuario escribe en el campo de búsqueda
@@ -293,8 +296,8 @@ if (searchQuery) {
 ```
 
 #### 3. **Filtrado por Categoría**
-**Ubicación:** `app/(tabs)/catalog.tsx` → `useEffect()` con `selectedCategory`
-**Función:** `data/products.ts` → `getProductsByCategory()`
+**📂 Ubicación:** [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx) → `useEffect()` con `selectedCategory` (línea ~36)  
+**📂 Función:** [`data/products.ts`](data/products.ts) → Función `getProductsByCategory()`
 
 **Cómo funciona:**
 1. Usuario selecciona una categoría del filtro horizontal
@@ -309,8 +312,8 @@ if (searchQuery) {
 - etc. (definidas en `data/products.ts`)
 
 #### 4. **Agregar Producto al Carrito**
-**Ubicación:** `app/(tabs)/catalog.tsx` → `handleAddToCart()`
-**Contexto:** `contexts/CartContext.tsx` → `addToCart()`
+**📂 Ubicación:** [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx) → Función `handleAddToCart()` (línea ~53)  
+**📂 Contexto:** [`contexts/CartContext.tsx`](contexts/CartContext.tsx) → Función `addToCart()` (línea ~115)
 
 **Cómo funciona:**
 1. Usuario presiona "Agregar al Carrito"
@@ -333,14 +336,14 @@ if (searchQuery) {
 ## 🛒 Módulo de Carrito de Compras
 
 ### Archivos Principales:
-- **Pantalla:** `app/(tabs)/cart.tsx`
-- **Contexto:** `contexts/CartContext.tsx`
-- **Componente:** `components/DeliveryScheduler.tsx`
+- **Pantalla:** [`app/(tabs)/cart.tsx`](app/(tabs)/cart.tsx)
+- **Contexto:** [`contexts/CartContext.tsx`](contexts/CartContext.tsx)
+- **Componente:** [`components/DeliveryScheduler.tsx`](components/DeliveryScheduler.tsx)
 
 ### Funcionalidades Implementadas:
 
 #### 1. **Visualización del Carrito**
-**Ubicación:** `app/(tabs)/cart.tsx` → `renderCartItem()`
+**📂 Ubicación:** [`app/(tabs)/cart.tsx`](app/(tabs)/cart.tsx) → Función `renderCartItem()` (línea ~86)
 
 **Muestra:**
 - Imagen del producto
@@ -353,8 +356,8 @@ if (searchQuery) {
 **Datos:** Vienen de `CartContext.items`
 
 #### 2. **Modificar Cantidad**
-**Ubicación:** `app/(tabs)/cart.tsx` → `handleQuantityChange()`
-**Contexto:** `contexts/CartContext.tsx` → `updateQuantity()`
+**📂 Ubicación:** [`app/(tabs)/cart.tsx`](app/(tabs)/cart.tsx) → Función `handleQuantityChange()` (línea ~27)  
+**📂 Contexto:** [`contexts/CartContext.tsx`](contexts/CartContext.tsx) → Función `updateQuantity()` (línea ~171)
 
 **Cómo funciona:**
 1. Usuario presiona botones +/- o ingresa cantidad manualmente
@@ -368,8 +371,8 @@ if (searchQuery) {
 **Persistencia:** Se guarda automáticamente en `AsyncStorage`
 
 #### 3. **Eliminar Producto del Carrito**
-**Ubicación:** `app/(tabs)/cart.tsx` → `handleRemoveItem()`
-**Contexto:** `contexts/CartContext.tsx` → `removeFromCart()`
+**📂 Ubicación:** [`app/(tabs)/cart.tsx`](app/(tabs)/cart.tsx) → Función `handleRemoveItem()` (línea ~35)  
+**📂 Contexto:** [`contexts/CartContext.tsx`](contexts/CartContext.tsx) → Función `removeFromCart()` (línea ~163)
 
 **Cómo funciona:**
 1. Usuario presiona botón eliminar
@@ -379,8 +382,8 @@ if (searchQuery) {
 5. Se actualiza el total
 
 #### 4. **Vaciar Carrito**
-**Ubicación:** `app/(tabs)/cart.tsx` → `handleClearCart()`
-**Contexto:** `contexts/CartContext.tsx` → `clearCart()`
+**📂 Ubicación:** [`app/(tabs)/cart.tsx`](app/(tabs)/cart.tsx) → Función `handleClearCart()` (línea ~46)  
+**📂 Contexto:** [`contexts/CartContext.tsx`](contexts/CartContext.tsx) → Función `clearCart()` (línea ~198)
 
 **Cómo funciona:**
 1. Usuario presiona "Vaciar Carrito"
@@ -390,8 +393,8 @@ if (searchQuery) {
 5. Se resetea el total
 
 #### 5. **Modo Mayorista vs Minorista**
-**Ubicación:** `app/(tabs)/index.tsx` → `handleWholesaleToggle()`
-**Contexto:** `contexts/CartContext.tsx` → `toggleWholesaleMode()`
+**📂 Ubicación:** [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) → Función `handleWholesaleToggle()` (línea ~31)  
+**📂 Contexto:** [`contexts/CartContext.tsx`](contexts/CartContext.tsx) → Función `toggleWholesaleMode()` (línea ~206)
 
 **Cómo funciona:**
 1. Usuario cambia el switch en la pantalla de inicio
@@ -408,8 +411,8 @@ if (searchQuery) {
 - Cantidades mínimas por producto
 
 #### 6. **Programación de Entrega**
-**Ubicación:** `app/(tabs)/cart.tsx` → `DeliveryScheduler`
-**Componente:** `components/DeliveryScheduler.tsx`
+**📂 Ubicación:** [`app/(tabs)/cart.tsx`](app/(tabs)/cart.tsx) → Componente `DeliveryScheduler` (línea ~190)  
+**📂 Componente:** [`components/DeliveryScheduler.tsx`](components/DeliveryScheduler.tsx)
 
 **Cómo funciona:**
 1. En modo mayorista, se requiere programar entrega
@@ -423,14 +426,14 @@ if (searchQuery) {
 ## 📦 Módulo de Pedidos
 
 ### Archivos Principales:
-- **Pantalla:** `app/(tabs)/orders.tsx`
-- **Contexto:** `contexts/OrdersContext.tsx`
-- **Notificaciones:** Integrado en `OrdersContext.updateOrderStatus()`
+- **Pantalla:** [`app/(tabs)/orders.tsx`](app/(tabs)/orders.tsx)
+- **Contexto:** [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx)
+- **Notificaciones:** Integrado en [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx) → `updateOrderStatus()` (línea ~103)
 
 ### Funcionalidades Implementadas:
 
 #### 1. **Visualización de Pedidos**
-**Ubicación:** `app/(tabs)/orders.tsx` → `renderOrder()`
+**📂 Ubicación:** [`app/(tabs)/orders.tsx`](app/(tabs)/orders.tsx) → Función `renderOrder()` (línea ~182)
 
 **Muestra:**
 - ID del pedido (formato: FL-YYYY-MMDD-XXX)
@@ -450,8 +453,8 @@ if (searchQuery) {
 - Cancelado
 
 #### 2. **Crear Nuevo Pedido**
-**Ubicación:** `app/payments/index.tsx` → `processPayment()`
-**Contexto:** `contexts/OrdersContext.tsx` → `addOrder()`
+**📂 Ubicación:** [`app/payments/index.tsx`](app/payments/index.tsx) → Función `processPayment()` (línea ~118)  
+**📂 Contexto:** [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx) → Función `addOrder()` (línea ~90)
 
 **Cómo funciona:**
 1. Usuario completa el pago
@@ -479,7 +482,7 @@ return `FL-${year}-${month}${day}-${random}`;
 ```
 
 #### 3. **Cambiar Estado de Pedido**
-**Ubicación:** `contexts/OrdersContext.tsx` → `updateOrderStatus()`
+**📂 Ubicación:** [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx) → Función `updateOrderStatus()` (línea ~103)
 
 **Estados disponibles:**
 - `pending` - Pendiente de confirmación
@@ -502,8 +505,8 @@ return `FL-${year}-${month}${day}-${random}`;
 **Notificaciones:** Implementadas en `contexts/OrdersContext.tsx` líneas 114-145
 
 #### 4. **Cancelar Pedido**
-**Ubicación:** `app/(tabs)/orders.tsx` → `handleCancelOrder()`
-**Contexto:** `contexts/OrdersContext.tsx` → `updateOrderStatus(orderId, 'cancelled')`
+**📂 Ubicación:** [`app/(tabs)/orders.tsx`](app/(tabs)/orders.tsx) → Función `handleCancelOrder()` (línea ~144)  
+**📂 Contexto:** [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx) → `updateOrderStatus(orderId, 'cancelled')`
 
 **Cómo funciona:**
 1. Usuario presiona "Cancelar" en un pedido pendiente
@@ -515,7 +518,7 @@ return `FL-${year}-${month}${day}-${random}`;
 **Restricción:** Solo pedidos con estado "pending" pueden cancelarse
 
 #### 5. **Ver Detalles del Pedido**
-**Ubicación:** `app/(tabs)/orders.tsx` → Modal de detalles
+**📂 Ubicación:** [`app/(tabs)/orders.tsx`](app/(tabs)/orders.tsx) → Modal de detalles (línea ~322)
 
 **Muestra:**
 - Información completa del pedido
@@ -529,14 +532,14 @@ return `FL-${year}-${month}${day}-${random}`;
 ## 💳 Módulo de Pagos
 
 ### Archivos Principales:
-- **Pantalla:** `app/payments/index.tsx`
-- **Contextos:** `CartContext`, `OrdersContext`, `StockContext`, `MetricsContext`
-- **Constantes:** `constants/payments.ts`
+- **Pantalla:** [`app/payments/index.tsx`](app/payments/index.tsx)
+- **Contextos:** [`contexts/CartContext.tsx`](contexts/CartContext.tsx), [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx), [`contexts/StockContext.tsx`](contexts/StockContext.tsx), [`contexts/MetricsContext.tsx`](contexts/MetricsContext.tsx)
+- **Constantes:** [`constants/payments.ts`](constants/payments.ts)
 
 ### Funcionalidades Implementadas:
 
 #### 1. **Visualización del Resumen**
-**Ubicación:** `app/payments/index.tsx` → Sección "Resumen del Pedido"
+**📂 Ubicación:** [`app/payments/index.tsx`](app/payments/index.tsx) → Sección "Resumen del Pedido" (línea ~322)
 
 **Muestra:**
 - Lista de productos con cantidades
@@ -547,7 +550,8 @@ return `FL-${year}-${month}${day}-${random}`;
 - **Total final**
 
 #### 2. **Selección de Método de Pago**
-**Ubicación:** `app/payments/index.tsx` → `renderPaymentMethod()`
+**📂 Ubicación:** [`app/payments/index.tsx`](app/payments/index.tsx) → Función `renderPaymentMethod()` (línea ~257)  
+**📂 Configuración:** [`constants/payments.ts`](constants/payments.ts) - Array `paymentMethods`
 
 **Métodos disponibles:**
 1. **Tarjeta de Crédito/Débito**
@@ -571,7 +575,7 @@ return `FL-${year}-${month}${day}-${random}`;
 **Configuración:** `constants/payments.ts`
 
 #### 3. **Procesamiento del Pago**
-**Ubicación:** `app/payments/index.tsx` → `processPayment()`
+**📂 Ubicación:** [`app/payments/index.tsx`](app/payments/index.tsx) → Función `processPayment()` (línea ~118)
 
 **Flujo completo:**
 1. **Validación del pedido:**
@@ -610,7 +614,7 @@ return `FL-${year}-${month}${day}-${random}`;
 **Código clave:** `app/payments/index.tsx` líneas 118-192
 
 #### 4. **Validación de Datos de Pago**
-**Ubicación:** `app/payments/index.tsx` → `handlePayment()`
+**📂 Ubicación:** [`app/payments/index.tsx`](app/payments/index.tsx) → Función `handlePayment()` (línea ~194)
 
 **Validaciones:**
 - Método de pago seleccionado
@@ -623,14 +627,15 @@ return `FL-${year}-${month}${day}-${random}`;
 ## 🔔 Sistema de Notificaciones
 
 ### Archivos Principales:
-- **Utilidades:** `utils/native-notifications.ts`
-- **Hook:** `hooks/use-native-notifications.ts`
-- **Inicialización:** `app/_layout.tsx`
+- **Utilidades:** [`utils/native-notifications.ts`](utils/native-notifications.ts)
+- **Hook:** [`hooks/use-native-notifications.ts`](hooks/use-native-notifications.ts)
+- **Inicialización:** [`app/_layout.tsx`](app/_layout.tsx) → `initializeNotifications()` (línea ~23)
 
 ### Funcionalidades Implementadas:
 
 #### 1. **Notificación al Completar Compra**
-**Ubicación:** `app/payments/index.tsx` → `processPayment()` línea 175
+**📂 Ubicación:** [`app/payments/index.tsx`](app/payments/index.tsx) → `processPayment()` línea 175  
+**📂 Función:** [`utils/native-notifications.ts`](utils/native-notifications.ts) → `showNativeNotification()`
 
 **Cuándo se dispara:**
 - Después de procesar el pago exitosamente
@@ -645,7 +650,8 @@ Te notificaremos cuando esté en camino.
 ```
 
 #### 2. **Notificación al Cancelar Pedido**
-**Ubicación:** `app/(tabs)/orders.tsx` → `handleCancelOrder()` línea 160
+**📂 Ubicación:** [`app/(tabs)/orders.tsx`](app/(tabs)/orders.tsx) → `handleCancelOrder()` línea 160  
+**📂 Hook:** [`hooks/use-native-notifications.ts`](hooks/use-native-notifications.ts) → `sendNotification()`
 
 **Cuándo se dispara:**
 - Cuando el usuario confirma la cancelación de un pedido
@@ -659,7 +665,8 @@ Total reembolsado: S/ [total]
 ```
 
 #### 3. **Notificaciones de Cambio de Estado**
-**Ubicación:** `contexts/OrdersContext.tsx` → `updateOrderStatus()` líneas 114-145
+**📂 Ubicación:** [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx) → `updateOrderStatus()` líneas 114-145  
+**📂 Función:** [`utils/native-notifications.ts`](utils/native-notifications.ts) → `showNativeNotification()`
 
 **Cuándo se dispara:**
 - Cada vez que cambia el estado de un pedido
@@ -673,8 +680,8 @@ Total reembolsado: S/ [total]
 - **Entregado:** "🎉 Pedido Entregado - ¡Entregado exitosamente!"
 
 #### 4. **Inicialización del Sistema**
-**Ubicación:** `app/_layout.tsx` → `useEffect()` línea 23
-**Función:** `utils/native-notifications.ts` → `initializeNotifications()`
+**📂 Ubicación:** [`app/_layout.tsx`](app/_layout.tsx) → `useEffect()` línea 23  
+**📂 Función:** [`utils/native-notifications.ts`](utils/native-notifications.ts) → `initializeNotifications()` (línea ~47)
 
 **Cómo funciona:**
 1. Al iniciar la app, se inicializa el sistema de notificaciones
@@ -691,14 +698,15 @@ Total reembolsado: S/ [total]
 ## 📷 Sistema de Cámara
 
 ### Archivos Principales:
-- **Componente Modal:** `components/CameraView.tsx`
-- **Pantalla Dedicada:** `app/camera/index.tsx`
-- **Integración:** `app/(tabs)/profile.tsx`, `app/profile/index.tsx`
+- **Componente Modal:** [`components/CameraView.tsx`](components/CameraView.tsx)
+- **Pantalla Dedicada:** [`app/camera/index.tsx`](app/camera/index.tsx)
+- **Integración:** [`app/(tabs)/profile.tsx`](app/(tabs)/profile.tsx), [`app/profile/index.tsx`](app/profile/index.tsx)
 
 ### Funcionalidades Implementadas:
 
 #### 1. **Tomar Foto desde Perfil**
-**Ubicación:** `app/(tabs)/profile.tsx` → `handleImagePicker()`
+**📂 Ubicación:** [`app/(tabs)/profile.tsx`](app/(tabs)/profile.tsx) → Función `handleImagePicker()` (línea ~49)  
+**📂 Componente:** [`components/CameraView.tsx`](components/CameraView.tsx)
 
 **Cómo funciona:**
 1. Usuario toca ícono de cámara en foto de perfil
@@ -716,7 +724,7 @@ Total reembolsado: S/ [total]
 **Componente:** `components/CameraView.tsx`
 
 #### 2. **Componente de Cámara Reutilizable**
-**Ubicación:** `components/CameraView.tsx`
+**📂 Ubicación:** [`components/CameraView.tsx`](components/CameraView.tsx)
 
 **Características:**
 - Modal que se puede usar en cualquier parte
@@ -736,7 +744,7 @@ Total reembolsado: S/ [total]
 ```
 
 #### 3. **Pantalla Dedicada de Cámara**
-**Ubicación:** `app/camera/index.tsx`
+**📂 Ubicación:** [`app/camera/index.tsx`](app/camera/index.tsx)
 
 **Acceso:** `router.push('/camera')`
 
@@ -750,13 +758,13 @@ Total reembolsado: S/ [total]
 ## 📊 Gestión de Stock
 
 ### Archivos Principales:
-- **Contexto:** `contexts/StockContext.tsx`
-- **Datos:** `data/products.ts`
+- **Contexto:** [`contexts/StockContext.tsx`](contexts/StockContext.tsx)
+- **Datos:** [`data/products.ts`](data/products.ts)
 
 ### Funcionalidades Implementadas:
 
 #### 1. **Inicialización de Stock**
-**Ubicación:** `contexts/StockContext.tsx` → `initializeStock()`
+**📂 Ubicación:** [`contexts/StockContext.tsx`](contexts/StockContext.tsx) → Función `initializeStock()` (línea ~65)
 
 **Cómo funciona:**
 1. Al iniciar la app, se carga el stock desde `AsyncStorage`
@@ -765,8 +773,8 @@ Total reembolsado: S/ [total]
 4. Se guarda automáticamente cuando cambia
 
 #### 2. **Reducir Stock (Al Agregar al Carrito)**
-**Ubicación:** `contexts/StockContext.tsx` → `reduceStock()`
-**Uso:** `app/(tabs)/catalog.tsx` → `handleAddToCart()`
+**📂 Ubicación:** [`contexts/StockContext.tsx`](contexts/StockContext.tsx) → Función `reduceStock()` (línea ~93)  
+**📂 Uso:** [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx) → `handleAddToCart()` (línea ~53)
 
 **Cómo funciona:**
 1. Se verifica stock disponible
@@ -777,8 +785,8 @@ Total reembolsado: S/ [total]
 **Validación:** No permite reducir si no hay stock suficiente
 
 #### 3. **Aumentar Stock (Al Eliminar del Carrito)**
-**Ubicación:** `contexts/StockContext.tsx` → `increaseStock()`
-**Uso:** `contexts/CartContext.tsx` → `removeFromCart()`
+**📂 Ubicación:** [`contexts/StockContext.tsx`](contexts/StockContext.tsx) → Función `increaseStock()` (línea ~105)  
+**📂 Uso:** [`contexts/CartContext.tsx`](contexts/CartContext.tsx) → `removeFromCart()` (línea ~163)
 
 **Cómo funciona:**
 1. Cuando se elimina un producto del carrito
@@ -787,7 +795,7 @@ Total reembolsado: S/ [total]
 4. Se guarda automáticamente
 
 #### 4. **Verificar Disponibilidad**
-**Ubicación:** `contexts/StockContext.tsx` → `isProductAvailable()`
+**📂 Ubicación:** [`contexts/StockContext.tsx`](contexts/StockContext.tsx) → Función `isProductAvailable()` (línea ~117)
 
 **Uso:**
 - Antes de agregar al carrito
@@ -801,14 +809,14 @@ Total reembolsado: S/ [total]
 ## 📈 Métricas y Estadísticas
 
 ### Archivos Principales:
-- **Contexto:** `contexts/MetricsContext.tsx`
-- **Visualización:** `app/(tabs)/profile.tsx`
+- **Contexto:** [`contexts/MetricsContext.tsx`](contexts/MetricsContext.tsx)
+- **Visualización:** [`app/(tabs)/profile.tsx`](app/(tabs)/profile.tsx) → Sección "Dashboard del Comerciante"
 
 ### Funcionalidades Implementadas:
 
 #### 1. **Actualización de Métricas**
-**Ubicación:** `contexts/MetricsContext.tsx` → `updateMetrics()`
-**Disparador:** `app/payments/index.tsx` → `processPayment()` línea 163
+**📂 Ubicación:** [`contexts/MetricsContext.tsx`](contexts/MetricsContext.tsx) → Función `updateMetrics()` (línea ~98)  
+**📂 Disparador:** [`app/payments/index.tsx`](app/payments/index.tsx) → `processPayment()` línea 163
 
 **Qué se actualiza:**
 - Total de pedidos (+1)
@@ -824,7 +832,8 @@ Total reembolsado: S/ [total]
 - Cada vez que se completa un pago exitosamente
 
 #### 2. **Visualización de Métricas**
-**Ubicación:** `app/(tabs)/profile.tsx` → Sección "Dashboard del Comerciante"
+**📂 Ubicación:** [`app/(tabs)/profile.tsx`](app/(tabs)/profile.tsx) → Sección "Dashboard del Comerciante" (línea ~150)  
+**📂 Función:** [`contexts/MetricsContext.tsx`](contexts/MetricsContext.tsx) → `getUserMetrics()` (línea ~78)
 
 **Muestra:**
 - Total de pedidos realizados
@@ -841,14 +850,14 @@ Total reembolsado: S/ [total]
 ## 🎨 Sistema de Tema y Estilos
 
 ### Archivos Principales:
-- **Constantes:** `constants/theme.ts`
-- **Componentes:** `components/themed-view.tsx`, `components/themed-text.tsx`
-- **Layout Responsive:** `components/ResponsiveLayout.tsx`
+- **Constantes:** [`constants/theme.ts`](constants/theme.ts)
+- **Componentes:** [`components/themed-view.tsx`](components/themed-view.tsx), [`components/themed-text.tsx`](components/themed-text.tsx)
+- **Layout Responsive:** [`components/ResponsiveLayout.tsx`](components/ResponsiveLayout.tsx)
 
 ### Funcionalidades:
 
 #### 1. **Colores Corporativos**
-**Ubicación:** `constants/theme.ts` → `Colors`
+**📂 Ubicación:** [`constants/theme.ts`](constants/theme.ts) → Objeto `Colors` (línea ~54)
 
 **Colores Frito-Lay:**
 - **Primario (Rojo):** `#E31E24`
@@ -858,7 +867,7 @@ Total reembolsado: S/ [total]
 - **Éxito (Verde):** `#228B22`
 
 #### 2. **Diseño Responsive**
-**Ubicación:** `constants/theme.ts` → `Breakpoints`, `Dimensions`, `responsive()`
+**📂 Ubicación:** [`constants/theme.ts`](constants/theme.ts) → `Breakpoints` (línea ~12), `Dimensions` (línea ~164), `responsive()` (línea ~32)
 
 **Breakpoints:**
 - xs: 320px (móviles pequeños)
@@ -877,33 +886,33 @@ Total reembolsado: S/ [total]
 ## 🔄 Flujos Principales de la Aplicación
 
 ### Flujo 1: Compra Completa
-1. **Login** → `app/auth/login.tsx`
-2. **Explorar Catálogo** → `app/(tabs)/catalog.tsx`
-3. **Agregar al Carrito** → `CartContext.addToCart()`
-4. **Ver Carrito** → `app/(tabs)/cart.tsx`
-5. **Programar Entrega** (si es mayorista) → `DeliveryScheduler`
-6. **Ir a Pagos** → `app/payments/index.tsx`
+1. **Login** → [`app/auth/login.tsx`](app/auth/login.tsx)
+2. **Explorar Catálogo** → [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx)
+3. **Agregar al Carrito** → [`contexts/CartContext.tsx`](contexts/CartContext.tsx) → `addToCart()`
+4. **Ver Carrito** → [`app/(tabs)/cart.tsx`](app/(tabs)/cart.tsx)
+5. **Programar Entrega** (si es mayorista) → [`components/DeliveryScheduler.tsx`](components/DeliveryScheduler.tsx)
+6. **Ir a Pagos** → [`app/payments/index.tsx`](app/payments/index.tsx)
 7. **Seleccionar Método** → `handlePayment()`
 8. **Procesar Pago** → `processPayment()`
-9. **Crear Pedido** → `OrdersContext.addOrder()`
-10. **Notificación** → "✅ Compra Realizada"
-11. **Actualizar Métricas** → `MetricsContext.updateMetrics()`
-12. **Limpiar Carrito** → `CartContext.clearCart()`
+9. **Crear Pedido** → [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx) → `addOrder()`
+10. **Notificación** → [`utils/native-notifications.ts`](utils/native-notifications.ts) → "✅ Compra Realizada"
+11. **Actualizar Métricas** → [`contexts/MetricsContext.tsx`](contexts/MetricsContext.tsx) → `updateMetrics()`
+12. **Limpiar Carrito** → [`contexts/CartContext.tsx`](contexts/CartContext.tsx) → `clearCart()`
 
 ### Flujo 2: Cambio de Estado de Pedido
-1. **Ver Pedidos** → `app/(tabs)/orders.tsx`
-2. **Seleccionar Pedido** → Ver detalles
-3. **Cambiar Estado** → `OrdersContext.updateOrderStatus()`
-4. **Notificación Automática** → Según nuevo estado
+1. **Ver Pedidos** → [`app/(tabs)/orders.tsx`](app/(tabs)/orders.tsx)
+2. **Seleccionar Pedido** → Ver detalles (modal línea 322)
+3. **Cambiar Estado** → [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx) → `updateOrderStatus()`
+4. **Notificación Automática** → [`utils/native-notifications.ts`](utils/native-notifications.ts) → Según nuevo estado
 5. **Actualizar UI** → Lista de pedidos
 
 ### Flujo 3: Actualizar Perfil
-1. **Ir a Perfil** → `app/(tabs)/profile.tsx`
-2. **Tocar Foto** → `handleImagePicker()`
+1. **Ir a Perfil** → [`app/(tabs)/profile.tsx`](app/(tabs)/profile.tsx)
+2. **Tocar Foto** → `handleImagePicker()` (línea 49)
 3. **Elegir Opción** → Cámara o Galería
-4. **Tomar/Seleccionar Foto** → `CameraView` o `ImagePicker`
-5. **Actualizar Perfil** → `AuthContext.updateProfile()`
-6. **Guardar** → `AsyncStorage` + `userStorage.ts`
+4. **Tomar/Seleccionar Foto** → [`components/CameraView.tsx`](components/CameraView.tsx) o `expo-image-picker`
+5. **Actualizar Perfil** → [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx) → `updateProfile()`
+6. **Guardar** → `AsyncStorage` + [`data/userStorage.ts`](data/userStorage.ts)
 
 ---
 
@@ -911,64 +920,98 @@ Total reembolsado: S/ [total]
 
 ### Autenticación
 ```
-contexts/AuthContext.tsx          → Lógica de autenticación
-app/auth/login.tsx                 → Pantalla de login
-app/auth/register.tsx              → Pantalla de registro
-app/auth/forgot-password.tsx       → Recuperación de contraseña
-components/AuthGuard.tsx           → Protección de rutas
-data/userStorage.ts                → Almacenamiento de usuarios
-data/seedUsers.ts                  → Usuarios de prueba
+📂 contexts/AuthContext.tsx          → Lógica de autenticación
+📂 app/auth/login.tsx                 → Pantalla de login
+📂 app/auth/register.tsx              → Pantalla de registro
+📂 app/auth/forgot-password.tsx       → Recuperación de contraseña
+📂 components/AuthGuard.tsx           → Protección de rutas
+📂 data/userStorage.ts                → Almacenamiento de usuarios
+📂 data/seedUsers.ts                  → Usuarios de prueba
 ```
 
 ### Carrito y Compras
 ```
-contexts/CartContext.tsx           → Estado del carrito
-app/(tabs)/cart.tsx                → Pantalla del carrito
-app/(tabs)/catalog.tsx             → Catálogo y agregar productos
-components/DeliveryScheduler.tsx   → Programación de entregas
+📂 contexts/CartContext.tsx           → Estado del carrito
+📂 app/(tabs)/cart.tsx                → Pantalla del carrito
+📂 app/(tabs)/catalog.tsx             → Catálogo y agregar productos
+📂 components/DeliveryScheduler.tsx     → Programación de entregas
 ```
 
 ### Pedidos
 ```
-contexts/OrdersContext.tsx          → Gestión de pedidos
-app/(tabs)/orders.tsx              → Lista y detalles de pedidos
+📂 contexts/OrdersContext.tsx          → Gestión de pedidos
+📂 app/(tabs)/orders.tsx              → Lista y detalles de pedidos
 ```
 
 ### Pagos
 ```
-app/payments/index.tsx             → Procesamiento de pagos
-constants/payments.ts              → Configuración de métodos
+📂 app/payments/index.tsx             → Procesamiento de pagos
+📂 constants/payments.ts              → Configuración de métodos
 ```
 
 ### Perfil
 ```
-app/(tabs)/profile.tsx             → Perfil principal
-app/profile/edit.tsx               → Editar perfil
-app/profile/change-password.tsx    → Cambiar contraseña
+📂 app/(tabs)/profile.tsx             → Perfil principal
+📂 app/profile/edit.tsx               → Editar perfil
+📂 app/profile/change-password.tsx    → Cambiar contraseña
 ```
 
 ### Notificaciones
 ```
-utils/native-notifications.ts      → Funciones de notificaciones
-hooks/use-native-notifications.ts  → Hook para usar notificaciones
+📂 utils/native-notifications.ts      → Funciones de notificaciones
+📂 hooks/use-native-notifications.ts  → Hook para usar notificaciones
 ```
 
 ### Cámara
 ```
-components/CameraView.tsx          → Componente modal de cámara
-app/camera/index.tsx               → Pantalla dedicada de cámara
+📂 components/CameraView.tsx          → Componente modal de cámara
+📂 app/camera/index.tsx               → Pantalla dedicada de cámara
 ```
 
 ### Stock
 ```
-contexts/StockContext.tsx          → Gestión de inventario
-data/products.ts                   → Datos de productos
+📂 contexts/StockContext.tsx          → Gestión de inventario
+📂 data/products.ts                   → Datos de productos
 ```
 
 ### Métricas
 ```
-contexts/MetricsContext.tsx        → Estadísticas y métricas
+📂 contexts/MetricsContext.tsx        → Estadísticas y métricas
 ```
+
+---
+
+## 🗺️ Mapa de Navegación Rápida
+
+### Por Funcionalidad
+
+| Funcionalidad | Archivo Principal | Línea/Función Clave |
+|--------------|-------------------|---------------------|
+| **Login** | [`app/auth/login.tsx`](app/auth/login.tsx) | `handleLogin()` ~25 |
+| **Registro** | [`app/auth/register.tsx`](app/auth/register.tsx) | Componente completo |
+| **Biometría** | [`app/auth/login.tsx`](app/auth/login.tsx) | `handleBiometricLogin()` ~43 |
+| **Catálogo** | [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx) | `CatalogContent()` ~25 |
+| **Búsqueda** | [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx) | `useEffect()` ~36 |
+| **Agregar al Carrito** | [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx) | `handleAddToCart()` ~53 |
+| **Ver Carrito** | [`app/(tabs)/cart.tsx`](app/(tabs)/cart.tsx) | `CartContent()` ~22 |
+| **Modificar Cantidad** | [`app/(tabs)/cart.tsx`](app/(tabs)/cart.tsx) | `handleQuantityChange()` ~27 |
+| **Procesar Pago** | [`app/payments/index.tsx`](app/payments/index.tsx) | `processPayment()` ~118 |
+| **Ver Pedidos** | [`app/(tabs)/orders.tsx`](app/(tabs)/orders.tsx) | `OrdersContent()` ~125 |
+| **Cancelar Pedido** | [`app/(tabs)/orders.tsx`](app/(tabs)/orders.tsx) | `handleCancelOrder()` ~144 |
+| **Tomar Foto** | [`app/(tabs)/profile.tsx`](app/(tabs)/profile.tsx) | `handleImagePicker()` ~49 |
+| **Editar Perfil** | [`app/profile/edit.tsx`](app/profile/edit.tsx) | Componente completo |
+| **Notificación Compra** | [`app/payments/index.tsx`](app/payments/index.tsx) | `processPayment()` línea 175 |
+| **Notificación Estado** | [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx) | `updateOrderStatus()` línea 114 |
+
+### Por Contexto/Estado Global
+
+| Contexto | Archivo | Funciones Principales |
+|----------|---------|----------------------|
+| **Autenticación** | [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx) | `login()`, `register()`, `biometricLogin()`, `updateProfile()` |
+| **Carrito** | [`contexts/CartContext.tsx`](contexts/CartContext.tsx) | `addToCart()`, `updateQuantity()`, `toggleWholesaleMode()` |
+| **Pedidos** | [`contexts/OrdersContext.tsx`](contexts/OrdersContext.tsx) | `addOrder()`, `updateOrderStatus()`, `getOrdersByUser()` |
+| **Stock** | [`contexts/StockContext.tsx`](contexts/StockContext.tsx) | `reduceStock()`, `increaseStock()`, `isProductAvailable()` |
+| **Métricas** | [`contexts/MetricsContext.tsx`](contexts/MetricsContext.tsx) | `updateMetrics()`, `getUserMetrics()` |
 
 ---
 
