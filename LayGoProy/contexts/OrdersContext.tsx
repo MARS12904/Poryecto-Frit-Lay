@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Product } from '../data/products';
+import { showNativeNotification } from '../utils/native-notifications';
 
 export interface OrderItem {
   id: string;
@@ -100,11 +101,52 @@ export const OrdersProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   const updateOrderStatus = async (orderId: string, status: Order['status']): Promise<void> => {
+    const order = orders.find(o => o.id === orderId);
+    const previousStatus = order?.status;
+    
     setOrders(prev => 
       prev.map(order => 
         order.id === orderId ? { ...order, status } : order
       )
     );
+
+    // Enviar notificación cuando cambia el estado (excepto cuando se cancela, ya que se maneja en orders.tsx)
+    if (order && status !== 'cancelled' && previousStatus !== status) {
+      const statusMessages: Record<Order['status'], { title: string; body: string }> = {
+        pending: {
+          title: '⏳ Pedido Pendiente',
+          body: `Tu pedido ${orderId} está pendiente de confirmación.`
+        },
+        confirmed: {
+          title: '✅ Pedido Confirmado',
+          body: `Tu pedido ${orderId} ha sido confirmado. Estamos preparándolo para ti.`
+        },
+        preparing: {
+          title: '👨‍🍳 Pedido en Preparación',
+          body: `Tu pedido ${orderId} está siendo preparado. Pronto estará listo para enviar.`
+        },
+        shipped: {
+          title: '🚚 Pedido Enviado',
+          body: `¡Tu pedido ${orderId} está en camino!${order.trackingNumber ? ` Número de seguimiento: ${order.trackingNumber}` : ''}`
+        },
+        delivered: {
+          title: '🎉 Pedido Entregado',
+          body: `¡Tu pedido ${orderId} ha sido entregado exitosamente! Esperamos que disfrutes tus productos.`
+        },
+        cancelled: {
+          title: '❌ Pedido Cancelado',
+          body: `Tu pedido ${orderId} ha sido cancelado.`
+        }
+      };
+
+      const message = statusMessages[status];
+      if (message) {
+        showNativeNotification({
+          title: message.title,
+          body: message.body
+        });
+      }
+    }
   };
 
   const getOrdersByUser = (userId: string): Order[] => {

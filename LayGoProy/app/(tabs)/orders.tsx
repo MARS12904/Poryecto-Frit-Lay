@@ -13,6 +13,7 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useOrders } from '../../contexts/OrdersContext';
 import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../../constants/theme';
+import { useNativeNotifications } from '../../hooks/use-native-notifications';
 
 interface OrderItem {
   id: string;
@@ -128,6 +129,7 @@ function OrdersContent() {
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const { user } = useAuth();
   const { getOrdersByUser, updateOrderStatus } = useOrders();
+  const { sendNotification } = useNativeNotifications();
   
   const orders = user ? getOrdersByUser(user.id) : [];
 
@@ -152,6 +154,14 @@ function OrdersContent() {
           style: 'destructive',
           onPress: async () => {
             await updateOrderStatus(orderId, 'cancelled');
+            
+            // Enviar notificación de cancelación
+            const order = getOrdersByUser(user?.id || '').find(o => o.id === orderId);
+            sendNotification({
+              title: '❌ Pedido Cancelado',
+              body: `Tu pedido ${orderId} ha sido cancelado exitosamente.${order ? ` Total reembolsado: S/ ${order.total.toFixed(2)}` : ''}`
+            });
+            
             setShowOrderDetails(false);
             setSelectedOrder(null);
           }

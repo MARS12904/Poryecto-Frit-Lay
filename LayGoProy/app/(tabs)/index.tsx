@@ -6,6 +6,7 @@ import { ResponsiveCard, ResponsiveLayout } from '../../components/ResponsiveLay
 import { BorderRadius, Colors, Dimensions, FontSizes, Shadows, Spacing } from '../../constants/theme';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
+import { useNativeNotifications } from '../../hooks/use-native-notifications';
 
 export default function HomeScreen() {
   return <HomeContent />;
@@ -25,8 +26,28 @@ function HomeContent() {
     setDeliverySchedule
   } = useCart();
 
+  const { sendNotification, scheduleNotification } = useNativeNotifications();
   const [showDeliveryScheduler, setShowDeliveryScheduler] = useState(false);
   const cartSummary = getCartSummary();
+
+  // Funciones de prueba de notificaciones
+  const testImmediateNotification = () => {
+    sendNotification({
+      title: '✅ Notificación de Prueba',
+      body: 'Las notificaciones están funcionando correctamente. Esta es una notificación inmediata.'
+    });
+  };
+
+  const testScheduledNotification = () => {
+    sendNotification({
+      title: '⏰ Notificación Programada',
+      body: 'Esta notificación se mostrará en 3 segundos...'
+    });
+    scheduleNotification({
+      title: '✅ Notificación Programada',
+      body: '¡Esta notificación se programó correctamente! Se mostró después de 3 segundos.'
+    }, 3);
+  };
 
   const handleWholesaleToggle = () => {
     Alert.alert(
@@ -184,6 +205,32 @@ function HomeContent() {
           <Ionicons name="headset" size={20} color={Colors.light.info} />
           <Text style={styles.benefitText}>Soporte especializado 24/7</Text>
         </View>
+      </View>
+
+      {/* Sección de prueba de notificaciones (solo para desarrollo) */}
+      <View style={styles.testNotificationsContainer}>
+        <Text style={styles.sectionTitle}>🔔 Prueba de Notificaciones</Text>
+        <Text style={styles.testDescription}>
+          Prueba el sistema de notificaciones de la app
+        </Text>
+        
+        <TouchableOpacity 
+          style={styles.testButton}
+          onPress={testImmediateNotification}
+        >
+          <Ionicons name="notifications" size={20} color={Colors.light.background} />
+          <Text style={styles.testButtonText}>Notificación Inmediata</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={[styles.testButton, styles.testButtonSecondary]}
+          onPress={testScheduledNotification}
+        >
+          <Ionicons name="time" size={20} color={Colors.light.primary} />
+          <Text style={[styles.testButtonText, styles.testButtonTextSecondary]}>
+            Notificación Programada (3 seg)
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* Modal de programación de entrega */}
@@ -378,5 +425,42 @@ const styles = StyleSheet.create({
     color: Colors.light.text,
     marginLeft: Spacing.md,
     flex: 1,
+  },
+  testNotificationsContainer: {
+    backgroundColor: Colors.light.backgroundCard,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.xl,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    ...Shadows.sm,
+  },
+  testDescription: {
+    fontSize: FontSizes.sm,
+    color: Colors.light.textSecondary,
+    marginBottom: Spacing.md,
+  },
+  testButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.light.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.sm,
+  },
+  testButtonSecondary: {
+    backgroundColor: Colors.light.backgroundSecondary,
+    borderWidth: 1,
+    borderColor: Colors.light.primary,
+  },
+  testButtonText: {
+    fontSize: FontSizes.md,
+    fontWeight: '600',
+    color: Colors.light.background,
+    marginLeft: Spacing.sm,
+  },
+  testButtonTextSecondary: {
+    color: Colors.light.primary,
   },
 });

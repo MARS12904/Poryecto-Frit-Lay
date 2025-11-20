@@ -19,6 +19,7 @@ import { Colors, Spacing, FontSizes, BorderRadius, Shadows } from '../../constan
 import * as WebBrowser from 'expo-web-browser';
 import { PAYMENT_LINK_URL } from '../../constants/payments';
 import { router } from 'expo-router';
+import { useNativeNotifications } from '../../hooks/use-native-notifications';
 
 interface PaymentMethod {
   id: string;
@@ -91,6 +92,7 @@ function PaymentsContent() {
   const { addOrder } = useOrders();
   const { reduceStock } = useStock();
   const { updateMetrics } = useMetrics();
+  const { sendNotification } = useNativeNotifications();
   const [selectedMethod, setSelectedMethod] = useState<string>('');
   const [cardDetails, setCardDetails] = useState({
     number: '',
@@ -169,7 +171,13 @@ function PaymentsContent() {
       // 4. Limpiar carrito
       clearCart();
 
-      // 5. Mostrar confirmación
+      // 5. Enviar notificación de compra exitosa
+      sendNotification({
+        title: '✅ Compra Realizada Exitosamente',
+        body: `Tu pedido ${orderId} ha sido procesado. Total: S/ ${cartSummary.finalTotal.toFixed(2)}. Te notificaremos cuando esté en camino.`
+      });
+
+      // 6. Mostrar confirmación
       Alert.alert(
         '¡Pago Exitoso!',
         `Tu pedido ${orderId} ha sido procesado exitosamente.\n\nTotal: S/ ${cartSummary.finalTotal.toFixed(2)}\n\nTe enviaremos un correo de confirmación.`,

@@ -41,12 +41,25 @@
       ],
       "expo-secure-store",
       "expo-image-picker",
-      "expo-camera",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "La app necesita acceso a tu cámara para tomar fotos de productos y perfil."
+        }
+      ],
       "expo-local-authentication",
       [
         "expo-image-picker",
         {
           "photosPermission": "La app necesita acceso a tus fotos para que puedas seleccionar una imagen de perfil."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/notification-icon.png",
+          "color": "#E31E24",
+          "sounds": []
         }
       ]
     ],
