@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import DeliveryScheduler from '../../components/DeliveryScheduler';
@@ -6,6 +7,7 @@ import { ResponsiveCard, ResponsiveLayout } from '../../components/ResponsiveLay
 import { BorderRadius, Colors, Dimensions, FontSizes, Shadows, Spacing } from '../../constants/theme';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
+import { useMetrics } from '../../contexts/MetricsContext';
 import { useNativeNotifications } from '../../hooks/use-native-notifications';
 
 export default function HomeScreen() {
@@ -25,10 +27,20 @@ function HomeContent() {
     deliverySchedule,
     setDeliverySchedule
   } = useCart();
-
+  const { getUserMetrics } = useMetrics();
   const { sendNotification, scheduleNotification } = useNativeNotifications();
   const [showDeliveryScheduler, setShowDeliveryScheduler] = useState(false);
   const cartSummary = getCartSummary();
+
+  // Obtener métricas del usuario para el dashboard
+  const userMetrics = user ? getUserMetrics(user.id) : {
+    totalOrders: 0,
+    totalSpent: 0,
+    totalSavings: 0,
+    averageOrderValue: 0,
+    monthlyGoal: 5000,
+    monthlyProgress: 0,
+  };
 
   // Funciones de prueba de notificaciones
   const testImmediateNotification = () => {
@@ -97,17 +109,57 @@ function HomeContent() {
         </Text>
       </ResponsiveCard>
 
-      {/* Estadísticas del carrito */}
-      <ResponsiveLayout direction="row" justify="space-around" align="center" gap="sm">
+      {/* Dashboard del Comerciante */}
+      <ResponsiveCard style={styles.dashboardContainer} padding="lg">
+        <Text style={styles.dashboardTitle}>Dashboard del Comerciante</Text>
+        <ResponsiveLayout direction="row" justify="space-around" align="center" gap="sm" style={styles.dashboardStats}>
+          <View style={styles.dashboardStat}>
+            <Ionicons name="receipt" size={Dimensions.isSmallScreen ? 20 : 24} color={Colors.light.primary} />
+            <Text style={styles.dashboardStatNumber}>{userMetrics.totalOrders}</Text>
+            <Text style={styles.dashboardStatLabel}>Pedidos</Text>
+          </View>
+          <View style={styles.dashboardStat}>
+            <Ionicons name="cash" size={Dimensions.isSmallScreen ? 20 : 24} color={Colors.light.success} />
+            <Text style={styles.dashboardStatNumber}>S/ {userMetrics.totalSpent.toFixed(2)}</Text>
+            <Text style={styles.dashboardStatLabel}>Total Gastado</Text>
+          </View>
+          <View style={styles.dashboardStat}>
+            <Ionicons name="trending-down" size={Dimensions.isSmallScreen ? 20 : 24} color={Colors.light.warning} />
+            <Text style={styles.dashboardStatNumber}>S/ {userMetrics.totalSavings.toFixed(2)}</Text>
+            <Text style={styles.dashboardStatLabel}>Ahorrado</Text>
+          </View>
+        </ResponsiveLayout>
+        {userMetrics.monthlyGoal > 0 && (
+          <View style={styles.progressContainer}>
+            <View style={styles.progressHeader}>
+              <Text style={styles.progressLabel}>Progreso Mensual</Text>
+              <Text style={styles.progressText}>
+                S/ {userMetrics.monthlyProgress.toFixed(2)} / S/ {userMetrics.monthlyGoal.toFixed(2)}
+              </Text>
+            </View>
+            <View style={styles.progressBar}>
+              <View 
+                style={[
+                  styles.progressFill, 
+                  { width: `${Math.min((userMetrics.monthlyProgress / userMetrics.monthlyGoal) * 100, 100)}%` }
+                ]} 
+              />
+            </View>
+          </View>
+        )}
+      </ResponsiveCard>
+
+      {/* Estadísticas del carrito actual */}
+      <ResponsiveLayout direction="row" justify="space-around" align="center" gap="sm" style={styles.cartStatsContainer}>
         <ResponsiveCard style={styles.statCard} padding="md">
           <Ionicons name="cart" size={Dimensions.isSmallScreen ? 20 : 24} color={Colors.light.primary} />
           <Text style={styles.statNumber}>{totalItems}</Text>
-          <Text style={styles.statLabel}>Productos</Text>
+          <Text style={styles.statLabel}>En Carrito</Text>
         </ResponsiveCard>
         <ResponsiveCard style={styles.statCard} padding="md">
           <Ionicons name="cash" size={Dimensions.isSmallScreen ? 20 : 24} color={Colors.light.success} />
           <Text style={styles.statNumber}>S/ {totalPrice.toFixed(2)}</Text>
-          <Text style={styles.statLabel}>Total</Text>
+          <Text style={styles.statLabel}>Total Actual</Text>
         </ResponsiveCard>
         <ResponsiveCard style={styles.statCard} padding="md">
           <Ionicons name="trending-down" size={Dimensions.isSmallScreen ? 20 : 24} color={Colors.light.warning} />
@@ -145,7 +197,10 @@ function HomeContent() {
       <View style={styles.quickActions}>
         <Text style={styles.sectionTitle}>Acciones Rápidas</Text>
         
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity 
+          style={styles.actionButton}
+          onPress={() => router.push('/(tabs)/catalog')}
+        >
           <Ionicons name="grid" size={24} color={Colors.light.primary} />
           <View style={styles.actionContent}>
             <Text style={styles.actionText}>Catálogo de Productos</Text>
@@ -154,7 +209,10 @@ function HomeContent() {
           <Ionicons name="chevron-forward" size={20} color={Colors.light.textLight} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity 
+          style={styles.actionButton}
+          onPress={() => router.push('/(tabs)/orders')}
+        >
           <Ionicons name="receipt" size={24} color={Colors.light.warning} />
           <View style={styles.actionContent}>
             <Text style={styles.actionText}>Mis Pedidos</Text>
@@ -163,7 +221,10 @@ function HomeContent() {
           <Ionicons name="chevron-forward" size={20} color={Colors.light.textLight} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity 
+          style={styles.actionButton}
+          onPress={() => router.push('/(tabs)/profile')}
+        >
           <Ionicons name="analytics" size={24} color={Colors.light.secondary} />
           <View style={styles.actionContent}>
             <Text style={styles.actionText}>Dashboard de Ventas</Text>
@@ -172,7 +233,10 @@ function HomeContent() {
           <Ionicons name="chevron-forward" size={20} color={Colors.light.textLight} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity 
+          style={styles.actionButton}
+          onPress={() => router.push('/(tabs)/profile')}
+        >
           <Ionicons name="person" size={24} color={Colors.light.info} />
           <View style={styles.actionContent}>
             <Text style={styles.actionText}>Mi Perfil</Text>
@@ -299,6 +363,71 @@ const styles = StyleSheet.create({
     color: Colors.light.textSecondary,
     lineHeight: Dimensions.isSmallScreen ? 16 : 20,
     marginTop: Spacing.sm,
+  },
+  dashboardContainer: {
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
+  },
+  dashboardTitle: {
+    fontSize: FontSizes.lg,
+    fontWeight: '600',
+    color: Colors.light.text,
+    marginBottom: Spacing.md,
+  },
+  dashboardStats: {
+    marginBottom: Spacing.md,
+  },
+  dashboardStat: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  dashboardStatNumber: {
+    fontSize: Dimensions.isSmallScreen ? FontSizes.lg : FontSizes.xl,
+    fontWeight: 'bold',
+    color: Colors.light.text,
+    marginVertical: Spacing.xs,
+  },
+  dashboardStatLabel: {
+    fontSize: Dimensions.isSmallScreen ? FontSizes.xs : FontSizes.sm,
+    color: Colors.light.textSecondary,
+    textAlign: 'center',
+  },
+  progressContainer: {
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: Colors.light.border,
+  },
+  progressHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  progressLabel: {
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+    color: Colors.light.text,
+  },
+  progressText: {
+    fontSize: FontSizes.sm,
+    fontWeight: '600',
+    color: Colors.light.primary,
+  },
+  progressBar: {
+    height: 8,
+    backgroundColor: Colors.light.backgroundSecondary,
+    borderRadius: BorderRadius.full,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    backgroundColor: Colors.light.primary,
+    borderRadius: BorderRadius.full,
+  },
+  cartStatsContainer: {
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.lg,
   },
   statCard: {
     flex: 1,
