@@ -50,6 +50,11 @@
 - **Tema:** [`constants/theme.ts`](#sistema-de-tema-y-estilos)
 - **Layout Responsive:** [`components/ResponsiveLayout.tsx`](#diseño-responsive)
 
+#### 🏠 Pantalla de Inicio
+- **Pantalla Principal:** [`app/(tabs)/index.tsx`](#módulo-de-pantalla-de-inicio)
+- **Dashboard:** Métricas del comerciante y estadísticas del carrito
+- **Accesos Rápidos:** Navegación a módulos principales
+
 #### 🏗️ Configuración
 - **Layout Principal:** [`app/_layout.tsx`](#archivo-principal-app_layouttsx)
 - **Navegación Tabs:** [`app/(tabs)/_layout.tsx`](#navegación-principal-apptabslayouttsx)
@@ -60,19 +65,20 @@
 ## 📋 Tabla de Contenidos
 
 1. [Estructura General de la Aplicación](#estructura-general-de-la-aplicación)
-2. [Módulo de Autenticación](#módulo-de-autenticación)
-3. [Módulo de Perfil de Usuario](#módulo-de-perfil-de-usuario)
-4. [Módulo de Catálogo de Productos](#módulo-de-catálogo-de-productos)
-5. [Módulo de Carrito de Compras](#módulo-de-carrito-de-compras)
-6. [Módulo de Pedidos](#módulo-de-pedidos)
-7. [Módulo de Pagos](#módulo-de-pagos)
-8. [Sistema de Notificaciones](#sistema-de-notificaciones)
-9. [Sistema de Cámara](#sistema-de-cámara)
-10. [Gestión de Stock](#gestión-de-stock)
-11. [Métricas y Estadísticas](#métricas-y-estadísticas)
-12. [Sistema de Tema y Estilos](#sistema-de-tema-y-estilos)
-13. [Flujos Principales](#flujos-principales-de-la-aplicación)
-14. [Estructura de Archivos](#estructura-de-archivos-por-funcionalidad)
+2. [Módulo de Pantalla de Inicio](#módulo-de-pantalla-de-inicio)
+3. [Módulo de Autenticación](#módulo-de-autenticación)
+4. [Módulo de Perfil de Usuario](#módulo-de-perfil-de-usuario)
+5. [Módulo de Catálogo de Productos](#módulo-de-catálogo-de-productos)
+6. [Módulo de Carrito de Compras](#módulo-de-carrito-de-compras)
+7. [Módulo de Pedidos](#módulo-de-pedidos)
+8. [Módulo de Pagos](#módulo-de-pagos)
+9. [Sistema de Notificaciones](#sistema-de-notificaciones)
+10. [Sistema de Cámara](#sistema-de-cámara)
+11. [Gestión de Stock](#gestión-de-stock)
+12. [Métricas y Estadísticas](#métricas-y-estadísticas)
+13. [Sistema de Tema y Estilos](#sistema-de-tema-y-estilos)
+14. [Flujos Principales](#flujos-principales-de-la-aplicación)
+15. [Estructura de Archivos](#estructura-de-archivos-por-funcionalidad)
 
 ---
 
@@ -105,6 +111,112 @@
 - Define las 5 pestañas principales: Inicio, Catálogo, Carrito, Pedidos, Perfil
 - Configura iconos y badges (contador de items en carrito)
 - Aplica colores del tema corporativo de Frito-Lay
+
+---
+
+## 🏠 Módulo de Pantalla de Inicio
+
+### Archivos Principales:
+- **Pantalla:** [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx)
+- **Contextos:** [`contexts/AuthContext.tsx`](contexts/AuthContext.tsx), [`contexts/CartContext.tsx`](contexts/CartContext.tsx), [`contexts/MetricsContext.tsx`](contexts/MetricsContext.tsx)
+
+### Funcionalidades Implementadas:
+
+#### 1. **Header con Branding**
+**📂 Ubicación:** [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) → Sección header (línea ~79)
+
+**Muestra:**
+- Logo y nombre "Frito-Lay Comerciantes"
+- Saludo personalizado con nombre del usuario
+- Subtítulo: "Tu plataforma de reabastecimiento"
+
+#### 2. **Modo de Compra (Mayorista/Minorista)**
+**📂 Ubicación:** [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) → Función `handleWholesaleToggle()` (línea ~64)
+
+**Cómo funciona:**
+1. Usuario cambia el switch de modo de compra
+2. Se muestra confirmación con Alert
+3. Se actualiza `isWholesaleMode` en CartContext
+4. Se recalculan todos los precios del carrito
+
+**Contexto:** [`contexts/CartContext.tsx`](contexts/CartContext.tsx) → `toggleWholesaleMode()`
+
+#### 3. **Dashboard del Comerciante**
+**📂 Ubicación:** [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) → Sección "Dashboard del Comerciante" (línea ~100)
+
+**Muestra métricas del usuario:**
+- **Total de Pedidos:** Número de pedidos realizados históricamente
+- **Total Gastado:** Suma de todos los pedidos completados
+- **Total Ahorrado:** Ahorro acumulado por compras en modo mayorista
+- **Progreso Mensual:** Barra de progreso mostrando avance hacia la meta mensual
+
+**Datos:** Vienen de [`contexts/MetricsContext.tsx`](contexts/MetricsContext.tsx) → `getUserMetrics(userId)`
+
+**Funcionalidad:**
+- Se actualiza automáticamente después de cada compra
+- Muestra progreso hacia meta mensual (por defecto S/ 5,000)
+- Barra de progreso visual con porcentaje
+
+#### 4. **Estadísticas del Carrito Actual**
+**📂 Ubicación:** [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) → Sección "Estadísticas del carrito actual" (línea ~130)
+
+**Muestra:**
+- **Productos en Carrito:** Cantidad total de items
+- **Total Actual:** Suma del carrito actual
+- **Ahorro:** Ahorro potencial si se completa la compra en modo mayorista
+
+**Datos:** Vienen de `CartContext` → `totalItems`, `totalPrice`, `getCartSummary()`
+
+#### 5. **Programación de Entrega (Modo Mayorista)**
+**📂 Ubicación:** [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) → Sección "Programación de entrega" (línea ~120)
+
+**Cómo funciona:**
+- Solo visible cuando `isWholesaleMode` está activo
+- Si hay entrega programada: muestra fecha, horario y dirección
+- Si no hay: muestra botón "Programar Entrega"
+- Al presionar, abre modal `DeliveryScheduler`
+
+**Componente:** [`components/DeliveryScheduler.tsx`](components/DeliveryScheduler.tsx)
+
+#### 6. **Accesos Rápidos**
+**📂 Ubicación:** [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) → Sección "Acciones Rápidas" (línea ~144)
+
+**Botones implementados:**
+1. **Catálogo de Productos**
+   - Navega a: `/(tabs)/catalog`
+   - Función: Ver todos los productos disponibles
+
+2. **Mis Pedidos**
+   - Navega a: `/(tabs)/orders`
+   - Función: Ver historial y seguimiento de pedidos
+
+3. **Dashboard de Ventas**
+   - Navega a: `/(tabs)/profile`
+   - Función: Ver métricas detalladas y reportes
+
+4. **Mi Perfil**
+   - Navega a: `/(tabs)/profile`
+   - Función: Configuración de cuenta y preferencias
+
+**Navegación:** Usa `router.push()` de `expo-router`
+
+#### 7. **Beneficios Exclusivos**
+**📂 Ubicación:** [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) → Sección "Beneficios Exclusivos" (línea ~186)
+
+**Muestra:**
+- Precios mayoristas preferenciales
+- Entrega programada y confiable
+- Reabastecimiento automático
+- Soporte especializado 24/7
+
+#### 8. **Prueba de Notificaciones (Desarrollo)**
+**📂 Ubicación:** [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) → Sección "Prueba de Notificaciones" (línea ~211)
+
+**Funciones:**
+- **Notificación Inmediata:** Prueba notificaciones al instante
+- **Notificación Programada:** Prueba notificaciones con delay de 3 segundos
+
+**Hook:** [`hooks/use-native-notifications.ts`](hooks/use-native-notifications.ts)
 
 ---
 
@@ -887,7 +999,8 @@ Total reembolsado: S/ [total]
 
 ### Flujo 1: Compra Completa
 1. **Login** → [`app/auth/login.tsx`](app/auth/login.tsx)
-2. **Explorar Catálogo** → [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx)
+2. **Pantalla de Inicio** → [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) - Ver dashboard y métricas
+3. **Explorar Catálogo** → [`app/(tabs)/catalog.tsx`](app/(tabs)/catalog.tsx)
 3. **Agregar al Carrito** → [`contexts/CartContext.tsx`](contexts/CartContext.tsx) → `addToCart()`
 4. **Ver Carrito** → [`app/(tabs)/cart.tsx`](app/(tabs)/cart.tsx)
 5. **Programar Entrega** (si es mayorista) → [`components/DeliveryScheduler.tsx`](components/DeliveryScheduler.tsx)
@@ -927,6 +1040,11 @@ Total reembolsado: S/ [total]
 📂 components/AuthGuard.tsx           → Protección de rutas
 📂 data/userStorage.ts                → Almacenamiento de usuarios
 📂 data/seedUsers.ts                  → Usuarios de prueba
+```
+
+### Pantalla de Inicio
+```
+📂 app/(tabs)/index.tsx                → Pantalla principal con dashboard
 ```
 
 ### Carrito y Compras
@@ -987,6 +1105,10 @@ Total reembolsado: S/ [total]
 
 | Funcionalidad | Archivo Principal | Línea/Función Clave |
 |--------------|-------------------|---------------------|
+| **Pantalla de Inicio** | [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) | `HomeContent()` ~17 |
+| **Dashboard Métricas** | [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) | Sección dashboard ~100 |
+| **Modo Mayorista** | [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) | `handleWholesaleToggle()` ~64 |
+| **Accesos Rápidos** | [`app/(tabs)/index.tsx`](app/(tabs)/index.tsx) | Sección acciones rápidas ~144 |
 | **Login** | [`app/auth/login.tsx`](app/auth/login.tsx) | `handleLogin()` ~25 |
 | **Registro** | [`app/auth/register.tsx`](app/auth/register.tsx) | Componente completo |
 | **Biometría** | [`app/auth/login.tsx`](app/auth/login.tsx) | `handleBiometricLogin()` ~43 |
