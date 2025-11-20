@@ -37,7 +37,11 @@ export default function ProfileScreen() {
   );
   const [showCamera, setShowCamera] = useState(false);
 
-  // Obtener métricas reales del usuario
+  /**
+   * Obtiene las métricas del comerciante desde el contexto de métricas
+   * Incluye: total de pedidos, gasto total, ahorros, meta mensual, productos más vendidos y actividad reciente
+   * Si no hay usuario, retorna valores por defecto
+   */
   const merchantStats = user ? getUserMetrics(user.id) : {
     totalOrders: 0,
     totalSpent: 0,
@@ -49,6 +53,13 @@ export default function ProfileScreen() {
     recentActivity: [],
   };
 
+  /**
+   * Maneja la selección de imagen de perfil
+   * Muestra un diálogo con dos opciones:
+   * 1. Tomar foto: Abre el componente CameraView para capturar una foto con la cámara
+   * 2. Elegir de galería: Solicita permisos y abre el selector de imágenes del dispositivo
+   * Si el usuario cancela, no se realiza ninguna acción
+   */
   const handleImagePicker = async () => {
     Alert.alert(
       'Seleccionar Foto',
@@ -87,18 +98,39 @@ export default function ProfileScreen() {
     );
   };
 
+  /**
+   * Procesa la foto capturada desde la cámara
+   * Recibe la URI de la imagen y actualiza el perfil del usuario con la nueva foto
+   * @param uri - Ruta de la imagen capturada
+   */
   const handleCameraCapture = async (uri: string) => {
     await updateProfile({ profileImage: uri });
   };
 
+  /**
+   * Navega a la pantalla de edición de perfil
+   * Permite al usuario modificar su información personal (nombre, email, etc.)
+   */
   const handleEditProfile = () => {
     router.push('/profile/edit');
   };
 
+  /**
+   * Navega a la pantalla de cambio de contraseña
+   * Permite al usuario actualizar su contraseña de forma segura
+   */
   const handleChangePassword = () => {
     router.push('/profile/change-password');
   };
 
+  /**
+   * Maneja el cierre de sesión del usuario
+   * Muestra un diálogo de confirmación antes de proceder
+   * Al confirmar:
+   * 1. Cierra la sesión del usuario (logout)
+   * 2. Limpia el carrito de compras
+   * 3. Redirige a la pantalla de login
+   */
   const handleLogout = () => {
     Alert.alert(
       'Cerrar Sesión',
@@ -118,6 +150,12 @@ export default function ProfileScreen() {
     );
   };
 
+  /**
+   * Maneja el cambio de estado de las notificaciones
+   * Actualiza la preferencia de notificaciones del usuario en su perfil
+   * Si la actualización falla, revierte el estado del switch y muestra un error
+   * @param value - Nuevo estado de las notificaciones (true/false)
+   */
   const handleNotificationToggle = async (value: boolean) => {
     setNotificationsEnabled(value);
     const success = await updateProfile({
@@ -133,6 +171,10 @@ export default function ProfileScreen() {
     }
   };
 
+  /**
+   * Validación: Si no hay usuario autenticado, muestra un mensaje de error
+   * Esto previene errores al intentar acceder a propiedades del usuario
+   */
   if (!user) {
     return (
       <View style={styles.container}>
@@ -144,13 +186,23 @@ export default function ProfileScreen() {
     );
   }
 
+  /**
+   * Calcula el porcentaje de progreso hacia la meta mensual
+   * Si no hay meta definida, retorna 0%
+   * El resultado se usa para mostrar la barra de progreso visual
+   */
   const progressPercentage = merchantStats.monthlyGoal > 0 
     ? (merchantStats.monthlyProgress / merchantStats.monthlyGoal) * 100 
     : 0;
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      {/* Header del perfil */}
+      {/* 
+        HEADER DEL PERFIL
+        Muestra la foto de perfil del usuario (o un icono por defecto si no tiene foto),
+        su nombre, email y un badge de "Comerciante Verificado" si está en modo mayorista.
+        Incluye un botón para cambiar la foto de perfil que abre el selector de imágenes.
+      */}
       <View style={styles.header}>
         <View style={styles.profileImageContainer}>
           {user.profileImage ? (
@@ -177,11 +229,20 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Dashboard de comerciante */}
+      {/* 
+        DASHBOARD DE COMERCIANTE
+        Muestra las métricas principales del negocio del usuario:
+        - Total de pedidos realizados
+        - Total gastado en todos los pedidos
+        - Total ahorrado con precios mayoristas
+        - Progreso hacia la meta mensual (barra de progreso)
+        - Top 3 productos más vendidos (si hay datos)
+        - Actividad reciente (últimas 3 acciones: pedidos, pagos, etc.)
+      */}
       <View style={styles.dashboardSection}>
         <Text style={styles.sectionTitle}>Dashboard de Negocio</Text>
         
-        {/* Estadísticas principales */}
+        {/* Estadísticas principales: Pedidos, Gastado, Ahorrado */}
         <View style={styles.statsContainer}>
           <View style={styles.statCard}>
             <View style={styles.statIconContainer}>
@@ -208,7 +269,11 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Progreso mensual */}
+        {/* 
+          PROGRESO MENSUAL
+          Muestra una barra de progreso visual que indica cuánto ha gastado el usuario
+          en relación a su meta mensual. Incluye el porcentaje completado.
+        */}
         <View style={styles.progressCard}>
           <View style={styles.progressHeader}>
             <Text style={styles.progressTitle}>Meta Mensual</Text>
@@ -229,7 +294,12 @@ export default function ProfileScreen() {
           </Text>
         </View>
 
-        {/* Productos top */}
+        {/* 
+          PRODUCTOS MÁS VENDIDOS
+          Muestra los top 3 productos que el usuario ha comprado más veces,
+          incluyendo la cantidad de unidades y el ingreso generado por cada producto.
+          Solo se muestra si hay productos en el historial.
+        */}
         {merchantStats.topProducts.length > 0 && (
           <View style={styles.topProductsCard}>
             <Text style={styles.cardTitle}>Productos Más Vendidos</Text>
@@ -245,7 +315,11 @@ export default function ProfileScreen() {
           </View>
         )}
 
-        {/* Actividad reciente */}
+        {/* 
+          ACTIVIDAD RECIENTE
+          Muestra las últimas 3 acciones del usuario (pedidos, pagos, actualizaciones),
+          con iconos, descripción, fecha y monto. Solo se muestra si hay actividad reciente.
+        */}
         {merchantStats.recentActivity.length > 0 && (
           <View style={styles.activityCard}>
             <Text style={styles.cardTitle}>Actividad Reciente</Text>
@@ -269,10 +343,16 @@ export default function ProfileScreen() {
         )}
       </View>
 
-      {/* Sección de información personal */}
+      {/* 
+        SECCIÓN DE INFORMACIÓN PERSONAL
+        Contiene opciones para gestionar la información del usuario:
+        - Editar Perfil: Permite modificar nombre, email y otros datos personales
+        - Cambiar Contraseña: Permite actualizar la contraseña de forma segura
+      */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Información Personal</Text>
         
+        {/* Botón para editar el perfil del usuario */}
         <TouchableOpacity style={styles.menuItem} onPress={handleEditProfile}>
           <View style={styles.menuItemLeft}>
             <View style={styles.menuIconContainer}>
@@ -283,6 +363,7 @@ export default function ProfileScreen() {
           <Ionicons name="chevron-forward" size={responsive({ xs: 16, sm: 18, md: 20 })} color={Colors.light.textLight} />
         </TouchableOpacity>
 
+        {/* Botón para cambiar la contraseña del usuario */}
         <TouchableOpacity style={styles.menuItem} onPress={handleChangePassword}>
           <View style={styles.menuItemLeft}>
             <View style={styles.menuIconContainer}>
@@ -294,10 +375,16 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Sección de preferencias */}
+      {/* 
+        SECCIÓN DE PREFERENCIAS
+        Permite al usuario configurar sus preferencias de la aplicación:
+        - Notificaciones: Activar/desactivar las notificaciones push
+        - Modo Oscuro: Cambiar entre tema claro y oscuro (actualmente no implementado)
+      */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Preferencias</Text>
         
+        {/* Switch para activar/desactivar notificaciones */}
         <View style={styles.menuItem}>
           <View style={styles.menuItemLeft}>
             <View style={styles.menuIconContainer}>
@@ -329,10 +416,18 @@ export default function ProfileScreen() {
         </View>
       </View>
 
-      {/* Sección de soporte */}
+      {/* 
+        SECCIÓN DE SOPORTE
+        Proporciona acceso a recursos de ayuda y soporte:
+        - Ayuda: Documentación y guías de uso
+        - Contacto: Formulario o información de contacto
+        - Acerca de: Información sobre la aplicación y versión
+        Nota: Estas opciones actualmente no tienen funcionalidad implementada
+      */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Soporte</Text>
         
+        {/* Opción de ayuda (pendiente de implementar) */}
         <TouchableOpacity style={styles.menuItem}>
           <View style={styles.menuItemLeft}>
             <View style={styles.menuIconContainer}>
@@ -364,7 +459,12 @@ export default function ProfileScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Botón de cerrar sesión */}
+      {/* 
+        BOTÓN DE CERRAR SESIÓN
+        Permite al usuario cerrar su sesión de forma segura.
+        Muestra un diálogo de confirmación antes de proceder.
+        Al confirmar, limpia la sesión y el carrito, y redirige al login.
+      */}
       <View style={styles.logoutSection}>
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Ionicons name="log-out-outline" size={responsive({ xs: 20, sm: 22, md: 24 })} color={Colors.light.error} />
@@ -375,7 +475,12 @@ export default function ProfileScreen() {
       {/* Espaciado inferior */}
       <View style={styles.bottomSpacing} />
 
-      {/* Componente de cámara */}
+      {/* 
+        COMPONENTE DE CÁMARA
+        Modal que se muestra cuando el usuario elige "Tomar Foto" para su perfil.
+        Permite capturar una foto con la cámara del dispositivo.
+        Al capturar, se actualiza automáticamente la foto de perfil del usuario.
+      */}
       <CameraView
         visible={showCamera}
         onClose={() => setShowCamera(false)}
