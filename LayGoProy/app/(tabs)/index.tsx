@@ -149,25 +149,6 @@ function HomeContent() {
         )}
       </ResponsiveCard>
 
-      {/* Estadísticas del carrito actual */}
-      <ResponsiveLayout direction="row" justify="space-around" align="center" gap="sm" style={styles.cartStatsContainer}>
-        <ResponsiveCard style={styles.statCard} padding="md">
-          <Ionicons name="cart" size={Dimensions.isSmallScreen ? 20 : 24} color={Colors.light.primary} />
-          <Text style={styles.statNumber}>{totalItems}</Text>
-          <Text style={styles.statLabel}>En Carrito</Text>
-        </ResponsiveCard>
-        <ResponsiveCard style={styles.statCard} padding="md">
-          <Ionicons name="cash" size={Dimensions.isSmallScreen ? 20 : 24} color={Colors.light.success} />
-          <Text style={styles.statNumber}>S/ {totalPrice.toFixed(2)}</Text>
-          <Text style={styles.statLabel}>Total Actual</Text>
-        </ResponsiveCard>
-        <ResponsiveCard style={styles.statCard} padding="md">
-          <Ionicons name="trending-down" size={Dimensions.isSmallScreen ? 20 : 24} color={Colors.light.warning} />
-          <Text style={styles.statNumber}>S/ {cartSummary.wholesaleSavings.toFixed(2)}</Text>
-          <Text style={styles.statLabel}>Ahorro</Text>
-        </ResponsiveCard>
-      </ResponsiveLayout>
-
       {/* Programación de entrega */}
       {isWholesaleMode && (
         <View style={styles.deliveryContainer}>
@@ -424,26 +405,6 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: Colors.light.primary,
     borderRadius: BorderRadius.full,
-  },
-  cartStatsContainer: {
-    marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-  },
-  statCard: {
-    flex: 1,
-    alignItems: 'center',
-    minHeight: Dimensions.isSmallScreen ? 80 : 100,
-  },
-  statNumber: {
-    fontSize: Dimensions.isSmallScreen ? FontSizes.lg : FontSizes.xl,
-    fontWeight: 'bold',
-    color: Colors.light.text,
-    marginVertical: Spacing.xs,
-  },
-  statLabel: {
-    fontSize: Dimensions.isSmallScreen ? FontSizes.xs : FontSizes.sm,
-    color: Colors.light.textSecondary,
-    textAlign: 'center',
   },
   deliveryContainer: {
     backgroundColor: Colors.light.backgroundCard,
