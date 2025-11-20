@@ -15,6 +15,8 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext';
 import { useMetrics } from '../../contexts/MetricsContext';
+import * as ImagePicker from 'expo-image-picker';
+import CameraView from '../../components/CameraView';
 import { 
   Colors, 
   Spacing, 
@@ -33,6 +35,7 @@ export default function ProfileScreen() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(
     user?.preferences?.notifications ?? true
   );
+  const [showCamera, setShowCamera] = useState(false);
 
   // Obtener métricas reales del usuario
   const merchantStats = user ? getUserMetrics(user.id) : {
@@ -47,7 +50,45 @@ export default function ProfileScreen() {
   };
 
   const handleImagePicker = async () => {
-    Alert.alert('Función en desarrollo', 'La selección de imagen estará disponible pronto');
+    Alert.alert(
+      'Seleccionar Foto',
+      '¿Cómo deseas agregar tu foto?',
+      [
+        {
+          text: 'Tomar Foto',
+          onPress: () => setShowCamera(true),
+        },
+        {
+          text: 'Elegir de Galería',
+          onPress: async () => {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+              Alert.alert('Permisos', 'Se necesitan permisos para acceder a la galería');
+              return;
+            }
+
+            const result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              allowsEditing: true,
+              aspect: [1, 1],
+              quality: 0.8,
+            });
+
+            if (!result.canceled && result.assets[0]) {
+              await updateProfile({ profileImage: result.assets[0].uri });
+            }
+          },
+        },
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+      ]
+    );
+  };
+
+  const handleCameraCapture = async (uri: string) => {
+    await updateProfile({ profileImage: uri });
   };
 
   const handleEditProfile = () => {
@@ -333,6 +374,14 @@ export default function ProfileScreen() {
 
       {/* Espaciado inferior */}
       <View style={styles.bottomSpacing} />
+
+      {/* Componente de cámara */}
+      <CameraView
+        visible={showCamera}
+        onClose={() => setShowCamera(false)}
+        onCapture={handleCameraCapture}
+        type="profile"
+      />
     </ScrollView>
   );
 }

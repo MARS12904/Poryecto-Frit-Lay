@@ -1,6 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -9,6 +10,7 @@ import { CartProvider } from '../contexts/CartContext';
 import { OrdersProvider } from '../contexts/OrdersContext';
 import { StockProvider } from '../contexts/StockContext';
 import { MetricsProvider } from '../contexts/MetricsContext';
+import { initializeNotifications } from '../utils/native-notifications';
 
 export const unstable_settings = {
   anchor: '(tabs)',
@@ -16,6 +18,11 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+
+  // Inicializar notificaciones nativas al cargar la app
+  useEffect(() => {
+    initializeNotifications();
+  }, []);
 
   return (
     <AuthProvider>
