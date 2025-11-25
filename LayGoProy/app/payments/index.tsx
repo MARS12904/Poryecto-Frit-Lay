@@ -20,6 +20,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { PAYMENT_LINK_URL } from '../../constants/payments';
 import { router } from 'expo-router';
 import { useNativeNotifications } from '../../hooks/use-native-notifications';
+import { sendOrderConfirmationEmail } from '../../utils/email-service';
 
 interface PaymentMethod {
   id: string;
@@ -148,7 +149,7 @@ function PaymentsContent() {
       }));
 
       const cartSummary = getCartSummary();
-      const orderId = await addOrder({
+      const order = await addOrder({
         total: cartSummary.finalTotal,
         wholesaleTotal: cartSummary.totalPrice,
         savings: cartSummary.wholesaleSavings,
@@ -161,17 +162,30 @@ function PaymentsContent() {
         userId: user.id,
       });
 
-      // 3. Actualizar métricas del usuario
+      const orderId = order.id;
+
+      // 3. Enviar correo de confirmación
+      if (user.email) {
+        try {
+          await sendOrderConfirmationEmail(order, user.email, user.name);
+          console.log('📧 Correo de confirmación enviado a:', user.email);
+        } catch (error) {
+          console.error('Error al enviar correo de confirmación:', error);
+          // No bloqueamos el proceso si falla el envío del correo
+        }
+      }
+
+      // 5. Actualizar métricas del usuario
       await updateMetrics(user.id, {
         total: cartSummary.finalTotal,
         savings: cartSummary.wholesaleSavings,
         items: orderItems,
       });
 
-      // 4. Limpiar carrito
+      // 6. Limpiar carrito
       clearCart();
 
-      // 5. Enviar notificación de compra exitosa
+      // 7. Enviar notificación de compra exitosa
       sendNotification({
         title: '✅ Compra Realizada Exitosamente',
         body: `Tu pedido ${orderId} ha sido procesado. Total: S/ ${cartSummary.finalTotal.toFixed(2)}. Te notificaremos cuando esté en camino.`
